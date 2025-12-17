@@ -310,8 +310,8 @@ class ResumeTailorGUI:
             self.log_status(f">> Target company: {company_name}")
             self.log_status(">> Parsing job description...")
 
-            # Create generator
-            generator = ResumeGenerator(verbose=False)
+            # Create generator with logging callback so we see all errors
+            generator = ResumeGenerator(verbose=False, log_callback=self.log_status)
 
             # Check which output formats are available
             import generator as gen_module
@@ -337,6 +337,17 @@ class ResumeTailorGUI:
                 output_format="all"
             )
 
+            # Validate output files for placeholder text before declaring success
+            self.log_status(">> Validating generated files...")
+            generated_files = list(base_dir.glob("Watson_Mulkey_*"))
+
+            for file in generated_files:
+                if file.suffix == '.md':  # Only check markdown files
+                    content = file.read_text(encoding='utf-8')
+                    # Check for placeholder patterns
+                    if '[relevant' in content or '[Key Requirement' in content or '[Specific' in content:
+                        raise ValueError(f"VALIDATION FAILED: {file.name} contains placeholder text. Generation likely failed.")
+
             self.log_status("╔═══════════════════════════════════════════════════════════╗")
             self.log_status("║              GENERATION COMPLETE! ✓                   ║")
             self.log_status("╚═══════════════════════════════════════════════════════════╝")
@@ -344,7 +355,7 @@ class ResumeTailorGUI:
             self.log_status(">> Generated files:")
 
             # List generated files
-            for file in base_dir.glob("Watson_Mulkey_*"):
+            for file in generated_files:
                 self.log_status(f"   • {file.name}")
 
             self.log_status("")

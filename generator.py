@@ -416,6 +416,15 @@ def validate_generated_content(content: str, job_info: Dict[str, Any]) -> List[s
         if pattern.lower() in content.lower():
             warnings.append(f"HALLUCINATION WARNING: {message}")
 
+    # Check for bracket placeholders (template text like [relevant area], [Key Requirement], etc.)
+    bracket_placeholders = re.findall(r'\[[A-Z][^\]]{3,50}\]', content)
+    if bracket_placeholders:
+        warnings.append(f"CRITICAL: Template placeholder brackets detected: {', '.join(bracket_placeholders[:5])}")
+
+    # Also check for common lowercase bracket patterns
+    if '[relevant' in content or '[specific' in content or '[metric]' in content:
+        warnings.append("CRITICAL: Template placeholder text detected - AI generation likely failed")
+
     # Verify correct contact info is present
     if CONTACT_INFO['email'] not in content:
         warnings.append(f"WARNING: Correct email ({CONTACT_INFO['email']}) not found in output")
@@ -486,17 +495,20 @@ def inject_correct_contact_info(content: str, job_title: str = "Senior Product M
 class ResumeGenerator:
     """Main generator class that orchestrates the entire process."""
 
-    def __init__(self, verbose: bool = False):
+    def __init__(self, verbose: bool = False, log_callback=None):
         self.verbose = verbose
+        self.log_callback = log_callback
         self.parser = JobDescriptionParser()
         self.retriever = SupermemoryRetriever(verbose=verbose)
         self.api_key = os.environ.get("ANTHROPIC_API_KEY")
         self.client = anthropic.Anthropic(api_key=self.api_key) if self.api_key else None
 
-    def _log(self, message: str):
-        """Print message if verbose mode is enabled."""
-        if self.verbose:
+    def _log(self, message: str, force: bool = False):
+        """Print message if verbose mode is enabled or force is True. Always call callback if provided."""
+        if self.verbose or force:
             print(message)
+        if self.log_callback:
+            self.log_callback(message)
 
     def generate(
         self,
@@ -1088,19 +1100,33 @@ Generate a cover letter that feels genuinely written by Watson and makes hiring 
 
             cover_letter_content = response.content[0].text
 
-            # Validate for hallucinations
+            # Validate for hallucinations BEFORE saving
             validation_warnings = validate_generated_content(cover_letter_content, job_info)
+
+            # Check for CRITICAL warnings (placeholders, templates, etc.)
+            critical_warnings = [w for w in validation_warnings if 'CRITICAL' in w]
+
+            if critical_warnings:
+                # Log critical warnings and RAISE instead of falling back silently
+                self._log("❌ CRITICAL VALIDATION FAILURES:", force=True)
+                for warning in critical_warnings:
+                    self._log(f"   {warning}", force=True)
+                raise ValueError(f"Cover letter generation failed validation: {critical_warnings[0]}")
+
+            # Log non-critical warnings but continue
             if validation_warnings:
-                self._log("⚠️  COVER LETTER VALIDATION WARNINGS:")
+                self._log("⚠️  COVER LETTER VALIDATION WARNINGS:", force=True)
                 for warning in validation_warnings:
-                    self._log(f"   {warning}")
+                    self._log(f"   {warning}", force=True)
 
         except Exception as e:
-            self._log(f"Error generating cover letter with AI: {e}")
-            # Fall back to basic template
-            return self._generate_basic_cover_letter(job_info, output_dir)
+            # Log error with force=True so it ALWAYS shows (even with verbose=False)
+            error_msg = f"CRITICAL ERROR: Cover letter AI generation failed: {str(e)}"
+            self._log(error_msg, force=True)
+            # Re-raise instead of falling back silently - user needs to know
+            raise RuntimeError(error_msg) from e
 
-        # Save to file
+        # Save to file (only reached if validation passed)
         filename = f"Watson_Mulkey_{company.replace(' ', '_')}_CoverLetter.md"
         file_path = output_dir / filename
 
