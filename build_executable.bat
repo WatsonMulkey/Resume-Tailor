@@ -24,17 +24,18 @@ python -m PyInstaller --onefile ^
     --name "Resume Tailor" ^
     --icon=NONE ^
     --add-data "import_career_data.py;." ^
+    --add-data "generator.py;." ^
+    --add-data "pdf_generator.py;." ^
+    --add-data "html_template.py;." ^
+    --add-data "docx_generator.py;." ^
+    --add-data "conflict_detector.py;." ^
     --add-data ".env;." ^
     --hidden-import anthropic ^
     --hidden-import dotenv ^
-    --hidden-import generator ^
-    --hidden-import pdf_generator ^
-    --hidden-import html_template ^
-    --hidden-import docx_generator ^
-    --hidden-import conflict_detector ^
     --hidden-import markdown ^
     --hidden-import weasyprint ^
     --hidden-import docx ^
+    --hidden-import reportlab ^
     resume_tailor_gui.py
 
 echo.

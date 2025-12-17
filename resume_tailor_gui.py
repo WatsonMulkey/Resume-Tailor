@@ -46,7 +46,7 @@ class ResumeTailorGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Resume Tailor v2.0")
-        self.root.geometry("900x700")
+        self.root.geometry("1000x850")
         self.root.configure(bg="#1a1a1a")
 
         # Retro terminal colors
@@ -312,6 +312,13 @@ class ResumeTailorGUI:
 
             # Create generator
             generator = ResumeGenerator(verbose=False)
+
+            # Check which output formats are available
+            import generator as gen_module
+            self.log_status(f">> PDF Available: {gen_module.PDF_AVAILABLE}")
+            self.log_status(f">> HTML Available: {gen_module.HTML_AVAILABLE}")
+            self.log_status(f">> DOCX Available: {gen_module.DOCX_AVAILABLE}")
+            self.log_status("")
 
             # Determine output directory
             base_dir = Path.home() / "OneDrive" / "Desktop" / "Jobs" / company_name.replace(" ", "_")
