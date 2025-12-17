@@ -19,7 +19,7 @@ echo Building executable...
 echo.
 
 REM Build the executable
-pyinstaller --onefile ^
+python -m PyInstaller --onefile ^
     --windowed ^
     --name "Resume Tailor" ^
     --icon=NONE ^
@@ -27,6 +27,14 @@ pyinstaller --onefile ^
     --add-data ".env;." ^
     --hidden-import anthropic ^
     --hidden-import dotenv ^
+    --hidden-import generator ^
+    --hidden-import pdf_generator ^
+    --hidden-import html_template ^
+    --hidden-import docx_generator ^
+    --hidden-import conflict_detector ^
+    --hidden-import markdown ^
+    --hidden-import weasyprint ^
+    --hidden-import docx ^
     resume_tailor_gui.py
 
 echo.
