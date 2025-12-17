@@ -1,0 +1,53 @@
+NEW SKILLS TO ADD TO SUPERMEMORY
+==================================
+
+Technical Skills:
+-----------------
+1. SQL and Database Experience
+   - Hands-on experience writing SQL queries
+   - Understanding database structures and data modeling
+   - Technical background valuable for data-focused PM roles
+
+2. Data Analysis / Business Intelligence Tools
+   - Extensive experience with BI tools (Looker, Fullstory, Google Analytics)
+   - Data visualization and insights extraction
+   - Comfortable with data-driven decision making
+
+Collaboration & Communication:
+-------------------------------
+3. Distributed/Async Team Experience
+   - Extensive experience working in fully remote/async teams
+   - Written-first communication approach
+   - Global team collaboration across time zones
+
+Product Documentation:
+----------------------
+4. PRDs (Product Requirements Documents)
+   - Writes detailed product requirement documents
+   - User stories and acceptance criteria
+   - Frames needs in actionable ways for engineering teams
+
+5. User Stories / Epics
+   - Agile user story creation
+   - Epic definition and breakdown
+   - Feature descriptions for development teams
+
+6. Design Briefs
+   - UX/UI briefs and documentation
+   - Wireframes and mockup documentation for designers
+   - Design requirement communication
+
+Platform & Technical:
+---------------------
+7. API and Platform Thinking
+   - Significant experience with platform products
+   - API design and developer tools
+   - Extensibility features and integrations
+   - Platform architecture considerations
+
+AI & Modern Tools:
+------------------
+(To be added based on collaboration assessment)
+
+---
+Notes: These skills were identified through questioning about Metabase job requirements (2025-12-17)

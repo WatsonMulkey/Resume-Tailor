@@ -1,0 +1,37 @@
+Senior Product Manager - Growth
+
+About the Company:
+We're a fast-growing B2B SaaS company helping teams collaborate better. Our mission is to empower knowledge workers to do their best work through intuitive, delightful software.
+
+About the Role:
+We're looking for a Senior Product Manager to own our Growth team's roadmap. You'll work closely with design, engineering, data, and marketing to drive user acquisition, activation, and retention.
+
+Responsibilities:
+• Develop and execute product strategy for user growth and engagement
+• Lead cross-functional teams (design, engineering, data science) to ship features that drive key metrics
+• Conduct user research and analyze data to identify opportunities and validate hypotheses
+• Run A/B tests and experiments to optimize conversion funnels
+• Partner with marketing and sales to ensure product-market fit
+• Present insights and recommendations to executive leadership
+• Build and maintain growth roadmap aligned with company OKRs
+
+Required Skills & Experience:
+• 5+ years of product management experience
+• Proven track record of driving user engagement and growth metrics
+• Strong data analysis skills (SQL, analytics tools like Looker, Mixpanel, or similar)
+• Experience with A/B testing and experimentation frameworks
+• Excellent stakeholder management and communication skills
+• Experience working with less technical stakeholders
+• Ability to balance qualitative user research with quantitative data
+
+Preferred:
+• Experience in B2B SaaS or education technology
+• Background working with globally distributed teams
+• Pragmatic Marketing certification
+• Experience presenting to C-level executives
+
+What We Offer:
+• Competitive salary and equity
+• Remote-first culture with optional office space
+• Professional development budget
+• Mission-driven team focused on meaningful work

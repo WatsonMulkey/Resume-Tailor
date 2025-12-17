@@ -1,0 +1,165 @@
+AI SKILLS ASSESSMENT - Watson Mulkey
+=====================================
+Based on collaboration across multiple projects (2024-2025)
+
+Projects:
+- Monomythism website
+- Number App (budgeting/finance tracking with Vue 3 + Vuetify + FastAPI)
+- Resume Tailor (AI-powered resume generation with supermemory + Claude API)
+
+CORE AI COMPETENCIES:
+=====================
+
+1. AI-Assisted Product Development
+-----------------------------------
+PROFICIENCY: Advanced
+EVIDENCE:
+- Successfully architected and built multiple full-stack applications using AI assistance (Claude Code)
+- Comfortable working iteratively with AI tools to refine requirements and implementation
+- Can articulate clear product requirements that AI can translate into working code
+- Understands when to provide detailed specs vs when to let AI propose solutions
+
+SPECIFIC SKILLS:
+- Prompt engineering for code generation
+- Requirements articulation for AI-powered development
+- Quality assurance of AI-generated code
+- Iterative refinement with AI pair programming
+
+2. AI Integration & API Experience
+-----------------------------------
+PROFICIENCY: Advanced
+EVIDENCE:
+- Integrated Claude API into custom applications (resume-tailor project)
+- Designed RAG (Retrieval-Augmented Generation) architecture with supermemory MCP
+- Implemented anti-hallucination patterns for factual accuracy
+- Built AI-powered document generation with quality controls
+
+SPECIFIC SKILLS:
+- Claude API implementation and optimization
+- Model selection and cost optimization (Haiku vs Sonnet tradeoffs)
+- Prompt engineering for production use cases
+- AI reliability patterns (zero-hallucination requirements)
+- MCP (Model Context Protocol) server integration
+
+3. AI Product Strategy & Optimization
+--------------------------------------
+PROFICIENCY: Advanced
+EVIDENCE:
+- Identified and implemented ATS optimization strategies for AI-generated resumes
+- Understands AI limitations and designs workarounds (encoding issues, hallucination prevention)
+- Proactively researches and applies AI best practices to improve outputs
+- Balances AI capabilities with human needs (e.g., ATS optimization for both bots and humans)
+
+SPECIFIC SKILLS:
+- Understanding AI training data limitations
+- Designing AI prompts for specific use cases
+- AI output quality control and validation
+- Research and application of AI best practices
+
+4. Technical Communication with AI Tools
+-----------------------------------------
+PROFICIENCY: Expert
+EVIDENCE:
+- Provides precise, actionable feedback on AI outputs ("encoding issues", "formatting preference")
+- Identifies root causes of AI failures (parser bugs, prompt issues)
+- Clearly articulates edge cases and requirements
+- Maintains quality standards across iterations
+
+SPECIFIC SKILLS:
+- Debugging AI-generated code collaboratively
+- Providing structured feedback for improvement
+- Pattern recognition in AI behavior
+- Quality-focused iteration
+
+5. Modern Development Stack Fluency
+------------------------------------
+PROFICIENCY: Intermediate-Advanced
+EVIDENCE:
+- Comfortable with: Python, Vue 3, FastAPI, SQL, APIs, MCP servers
+- Understands: Backend/frontend architecture, database design, API integration
+- Can evaluate: Technical tradeoffs, dependency management, error handling
+
+SPECIFIC SKILLS:
+- Full-stack application architecture
+- API design and integration
+- Database and data modeling concepts
+- Modern frontend frameworks (Vue 3, Vuetify)
+
+6. AI-Powered Workflow Automation
+----------------------------------
+PROFICIENCY: Advanced
+EVIDENCE:
+- Built end-to-end automation for resume tailoring (CLI tool with AI generation)
+- Integrated multiple AI services (Claude API, supermemory) into cohesive workflow
+- Designed for scalability and reusability
+- Focus on practical business outcomes (job application efficiency)
+
+SPECIFIC SKILLS:
+- Process automation with AI
+- Multi-service AI orchestration
+- CLI tool design and UX
+- Workflow optimization
+
+7. Quality Assurance & Edge Case Thinking
+------------------------------------------
+PROFICIENCY: Expert
+EVIDENCE:
+- Catches subtle issues: encoding problems, formatting bugs, parser edge cases
+- Systematic testing approach (HTML rendering, PDF generation, ATS compatibility)
+- Provides detailed, reproducible bug reports
+- Thinks through user experience implications
+
+SPECIFIC SKILLS:
+- QA mindset for AI outputs
+- Edge case identification
+- Cross-platform compatibility awareness
+- User experience validation
+
+8. Rapid Learning & Technology Adoption
+----------------------------------------
+PROFICIENCY: Expert
+EVIDENCE:
+- Quickly adopts new tools and frameworks across projects
+- Self-directed research (ATS optimization, Indeed articles)
+- Integrates new knowledge into active projects
+- Comfortable with emerging technologies
+
+SPECIFIC SKILLS:
+- Fast technology ramp-up
+- Self-directed learning
+- Practical application of research
+- Continuous improvement mindset
+
+RECOMMENDED RESUME LANGUAGE:
+============================
+
+For AI-Focused Roles:
+"Experienced in AI-assisted product development with hands-on implementation of Claude API, RAG architectures, and MCP integrations. Designed and built production AI applications with anti-hallucination patterns and quality controls. Skilled in prompt engineering, AI workflow automation, and balancing AI capabilities with human needs."
+
+For Technical PM Roles:
+"Strong technical background with experience architecting full-stack applications (Python, Vue 3, FastAPI) and integrating AI services (Claude API, vector databases). Comfortable with modern development workflows, API design, and databases. Proven ability to work effectively with engineering teams on complex technical products."
+
+For Data/BI Product Roles:
+"Technical PM with experience in data analysis, SQL, BI tools (Looker, Fullstory, Google Analytics), and AI-powered data workflows. Built RAG-based applications using vector search and semantic retrieval. Understands data engineering concepts and can bridge business needs with technical implementation."
+
+KEY DIFFERENTIATORS:
+====================
+1. Hands-on AI implementation experience, not just theoretical knowledge
+2. Proven ability to identify and solve AI edge cases and limitations
+3. Quality-focused approach to AI outputs (zero-hallucination requirements)
+4. Successful track record of shipping AI-powered products
+5. Strong technical communication skills for async, distributed teams
+6. Systematic thinking combined with attention to detail
+
+SUGGESTED ADDITIONS TO CAREER DATA:
+====================================
+- "Built production AI application using Claude API with RAG architecture"
+- "Designed anti-hallucination patterns for factual accuracy in AI-generated content"
+- "Integrated MCP (Model Context Protocol) servers for semantic data retrieval"
+- "Experienced with prompt engineering and AI optimization for business use cases"
+- "Developed full-stack applications using AI-assisted development workflows"
+
+---
+Assessment Date: 2025-12-17
+Based on: 3+ months of collaborative project work
+Projects: Monomythism, Number App, Resume Tailor

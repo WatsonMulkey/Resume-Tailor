@@ -1,0 +1,40 @@
+Metabase is the easiest way for people to get insights from their data, from tiny startups who get up and running quickly to major corporations with tens of thousands of users. That's why people love us.
+
+We bring data tools with the elegance and simplicity of consumer products to the crufty world of enterprise business intelligence. We provide an opinionated open source starting point for how companies should measure, analyze and share their data, which is used by tens of thousands of companies.
+
+Our business is thriving and expanding our product in both depth and breadth, and looking for quite technical, UX-appreciative, craftsmanship-aligned Product Managers to join the team.
+
+PMing at Metabase can be different than elsewhere, as we prioritize product craftsmanship and deep understanding of problems over moving metrics at all costs. It rewards intellectual curiosity, customer empathy and systematic thinking and doesn't emphasize strict metric optimization or a ship-ship-ship attitude. We ship, but we do it well.
+
+Even if you don't meet 100% of the qualifications below, please still consider applying. We believe in a holistic approach when evaluating talent for our team.
+
+Responsibilities
+Develop deep knowledge and empathy for users needs in the areas they tackle. This involves reviewing existing issues, tickets, docs, engaging in lots of interviews and evaluating quantitative data.
+Understand the underlying mechanics of the product at a technical level. You don't need to read/write code, but need to have the curiosity and ability to over time understand how things work and develop instincts for what's easy/hard.
+Develop strategies for solving clusters of users needs in thoughtful ways, ultimately delivering product docs which frame needs in actionable ways for designers and engineers. This is really important.
+Steward projects forward, helping keep focus, momentum, and continuously re-evaluating scope, with flexibility and appreciation for technical constraints and UX considerations.
+Follow-up on the outcomes of projects you ship, quantitatively and qualitatively.
+Collaborate with the rest of the team, consistently seeking and providing feedback, as well as pitching ideas for how to advance the product.
+Responsibilities don't include: managing people, herding cats, writing code, making mocks.
+
+About you
+A thorough thinker, able to be both diligent with details but systematic to see the big picture.
+Appreciative of clean but powerful user experiences (and the hard work they require).
+Able to keep a vision in mind, but break the path to it into small, doable, valuable steps.
+Bearer of strong product sense and good taste. Yes, I said it: good taste. To make a product users can love, it has to be lovable in first place, and that requires knowing what not only solves a problem but is pleasant to use.
+Excited to work asynchronously in a global team, and with the written communication chops to do it effectively.
+More interested in the Product than the Management part of Product Management.
+While our team is globally distributed, this role involves enough synchronous interactions with team members in the US West Coast. So don't accept applicants farther East than UTC+3. This restriction doesn't necessarily apply to other roles at Metabase, but is non-negotiable for PMs.
+
+Skills and experience
+Must have enough of a technical background. Preference is from data analysis, data engineering, or software engineering with experience with databases. PMing these things for a long while can also work. We're not set up to have people learn the basics of data stacks on the job and screen for it early in the process.
+At least 4 years of experience in a product management role, making software in-house, having been through a few cycles of discovery, execution and iteration. We're not yet set up to simultaneously train a junior PM and onboard them to the complexities of Metabase. In terms of responsibilities and the level of autonomy we expect from our PMs, this is a mid-to-senior PM role, and IC PMs on our team previously held GPM, Director and VP titles.
+Depending on the role you're for which you're a good match, experience working on a platform team and thinking through APIs may be needed, but we'll get there later.
+Driven and able to help others continuously deliver work through influence, not authority.
+Skills you don't need: up-to-date coding skills, customer management, horse whispering.
+
+Read more about the interview process for this role here.
+
+If there's anything more you'd like to tell us about you or your interests, use the "additional information" section on the application page. We are real humans looking at applications and we love to hear what you have to say!
+
+We're a global team (50% outside the US), fully distributed (from Thailand to California), who get things done asynchronously, with plenty of uninterrupted time, supporting each other to do the best work of our careers. We offer flexibility (define your own schedule and work from wherever you want), autonomy, and an environment that fosters growth, learning, and development. We're relentlessly user-focused and believe in building long-term value, not short-term hacks. And we raised a $30M Series B to take our approach to the next level for years to come.

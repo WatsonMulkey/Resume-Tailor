@@ -1,0 +1,477 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>M. WATSON MULKEY - Resume</title>
+        
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Calibri', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+            font-size: 10.5pt;
+            line-height: 1.5;
+            color: #2c3e50;
+            background: #f5f5f5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .page {
+            width: 8.5in;
+            min-height: 11in;
+            margin: 20px auto;
+            padding: 0.6in;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: 24px;
+            border-bottom: 3px solid #2563EB;
+            padding-bottom: 16px;
+        }
+
+        .name {
+            font-size: 28pt;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .title {
+            font-size: 13pt;
+            font-weight: 600;
+            color: #2563EB;
+            margin-bottom: 10px;
+        }
+
+        .contact-info {
+            font-size: 9.5pt;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .contact-info a {
+            color: #2563EB;
+            text-decoration: none;
+        }
+
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        /* Section divider */
+        .section-divider {
+            border-bottom: 1.5px solid #e0e0e0;
+            margin: 8px 0 14px 0;
+        }
+
+        /* Two column layout */
+        .content-wrapper {
+            display: flex;
+            gap: 30px;
+        }
+
+        .left-column {
+            flex: 1.4;
+        }
+
+        .right-column {
+            flex: 1;
+        }
+
+        /* Section headers */
+        .section-header {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-top: 20px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-header:first-child {
+            margin-top: 0;
+        }
+
+        /* Job entry */
+        .job-entry {
+            margin-bottom: 20px;
+            position: relative;
+            padding-left: 28px;
+        }
+
+        .company-icon {
+            position: absolute;
+            left: 0;
+            top: 2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+        }
+
+        .job-title {
+            font-size: 10.5pt;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 3px;
+            line-height: 1.3;
+        }
+
+        .company-name {
+            font-size: 10pt;
+            font-weight: 600;
+            color: #2563EB;
+            margin-bottom: 3px;
+        }
+
+        .job-meta {
+            font-size: 9pt;
+            color: #777;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+
+        .job-bullets {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .job-bullets li {
+            font-size: 9.5pt;
+            color: #333;
+            margin-bottom: 5px;
+            padding-left: 14px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .job-bullets li:before {
+            content: "▪";
+            position: absolute;
+            left: 0;
+            color: #2563EB;
+            font-weight: bold;
+        }
+
+        /* Achievements */
+        .achievement {
+            margin-bottom: 16px;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .achievement-icon {
+            position: absolute;
+            left: 0;
+            top: 1px;
+            font-size: 13pt;
+            color: #2563EB;
+        }
+
+        .achievement-title {
+            font-size: 10pt;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .achievement-desc {
+            font-size: 9.5pt;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* Skills */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .skill-item {
+            font-size: 9.5pt;
+            color: #333;
+            padding: 6px 0;
+            border-left: 3px solid #2563EB;
+            padding-left: 10px;
+        }
+
+        /* Certifications */
+        .cert-item {
+            margin-bottom: 12px;
+        }
+
+        .cert-title {
+            font-size: 10pt;
+            font-weight: bold;
+            color: #2563EB;
+            margin-bottom: 2px;
+        }
+
+        .cert-desc {
+            font-size: 9pt;
+            color: #555;
+            line-height: 1.3;
+        }
+
+        /* Education */
+        .education-item {
+            margin-bottom: 10px;
+        }
+
+        .degree {
+            font-size: 10pt;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+
+        .school {
+            font-size: 10pt;
+            color: #2563EB;
+            font-weight: bold;
+        }
+
+        .edu-dates {
+            font-size: 9pt;
+            color: #666;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .page {
+                width: 100%;
+                margin: 0;
+                padding: 0.5in;
+                box-shadow: none;
+            }
+
+            .header {
+                page-break-after: avoid;
+            }
+
+            .section-header {
+                page-break-after: avoid;
+            }
+
+            .job-entry, .achievement, .cert-item {
+                page-break-inside: avoid;
+            }
+
+            /* Ensure colors print */
+            * {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                color-adjust: exact;
+            }
+        }
+
+        @page {
+            size: Letter;
+            margin: 0;
+        }
+
+        /* Screen-only: subtle hover effects */
+        @media screen {
+            .job-entry:hover {
+                background-color: #f8f9fa;
+                transition: background-color 0.2s;
+            }
+        }
+    </style>
+    
+    </head>
+    <body>
+        <div class="page">
+            <!-- Header -->
+            <div class="header">
+                <div class="name">M. WATSON MULKEY</div>
+                <div class="title">Senior Product Manager - Product Manager</div>
+                <div class="contact-info">
+                    4348082493 • watsonmulkey@gmail.com • linkedin.com/in/watsonmulkey • Denver, Colorado
+                </div>
+                <div class="section-divider"></div>
+            </div>
+
+            <!-- Two column content -->
+            <div class="content-wrapper">
+                <!-- Left column: Experience & Education -->
+                <div class="left-column">
+                    <div class="section-header">EXPERIENCE</div>
+                    <div class="section-divider"></div>
+                    
+        <div class="job-entry">
+            <div class="company-icon" style="background-color: #6366F1;"></div>
+            <div class="job-title"></div>
+            <div class="company-name">Registria</div>
+            <div class="job-meta">2024-2025 • </div>
+            
+        </div>
+        
+
+        <div class="job-entry">
+            <div class="company-icon" style="background-color: #EC4899;"></div>
+            <div class="job-title"></div>
+            <div class="company-name"># Senior Product Manager, ID/Onboarding/Platform</div>
+            <div class="job-meta"> • </div>
+            <ul class="job-bullets"><li>Developed multi-vertical dependency roadmaps and drove the delivery of a reporting suite for major brands including Sony and Whirlpool</li></ul>
+        </div>
+        
+
+        <div class="job-entry">
+            <div class="company-icon" style="background-color: #10B981;"></div>
+            <div class="job-title"></div>
+            <div class="company-name">Discovery Education</div>
+            <div class="job-meta">2021-2023 • </div>
+            
+        </div>
+        
+
+        <div class="job-entry">
+            <div class="company-icon" style="background-color: #F59E0B;"></div>
+            <div class="job-title"></div>
+            <div class="company-name"># Product Manager, Teacher Tools</div>
+            <div class="job-meta"> • </div>
+            <ul class="job-bullets"><li>Overhauled the teacher-facing app, resulting in a 32% year-over-year increase in user engagement</li>
+<li>Partnered with the data team to conduct A/B testing and monthly C-Suite presentations, identifying a 33% traffic loss and recovering 10% in the first month</li>
+<li>Led cross-functional teams of 20+ people, resulting in a 15% increase in delivery rate</li></ul>
+        </div>
+        
+
+        <div class="job-entry">
+            <div class="company-icon" style="background-color: #8B5CF6;"></div>
+            <div class="job-title"></div>
+            <div class="company-name">Bookshop.org</div>
+            <div class="job-meta">2020-Present • </div>
+            
+        </div>
+        
+
+        <div class="job-entry">
+            <div class="company-icon" style="background-color: #6366F1;"></div>
+            <div class="job-title"></div>
+            <div class="company-name"># Product Consultant</div>
+            <div class="job-meta"> • </div>
+            <ul class="job-bullets"><li>Provided guidance and training to product managers for a $50M revenue e-commerce platform with global distributed teams</li></ul>
+        </div>
+        
+
+        <div class="job-entry">
+            <div class="company-icon" style="background-color: #EC4899;"></div>
+            <div class="job-title"></div>
+            <div class="company-name">Simplifya</div>
+            <div class="job-meta">2019-2021 • </div>
+            
+        </div>
+        
+
+        <div class="job-entry">
+            <div class="company-icon" style="background-color: #10B981;"></div>
+            <div class="job-title"></div>
+            <div class="company-name"># Product Manager</div>
+            <div class="job-meta"> • </div>
+            <ul class="job-bullets"><li>Refactored the flagship auditing product, resulting in a 50% reduction in completion time and a 40% increase in usage</li>
+<li>Delivered a new compliance feature for regulatory needs, contributing to the company's 0-1 product launch</li></ul>
+        </div>
+        
+
+        <div class="job-entry">
+            <div class="company-icon" style="background-color: #F59E0B;"></div>
+            <div class="job-title"></div>
+            <div class="company-name">Helix Education</div>
+            <div class="job-meta">2017-2018 • </div>
+            
+        </div>
+        
+
+        <div class="job-entry">
+            <div class="company-icon" style="background-color: #8B5CF6;"></div>
+            <div class="job-title"></div>
+            <div class="company-name"># Product Manager</div>
+            <div class="job-meta"> • </div>
+            <ul class="job-bullets"><li>Developed multi-year roadmaps and managed vendor negotiations for a higher education enrollment platform</li></ul>
+        </div>
+        
+
+                    <div class="section-header">EDUCATION</div>
+                    <div class="section-divider"></div>
+                    
+    <div class="education-item">
+        <div class="degree">Bachelor of Arts - English</div>
+        <div class="school">Hampden-Sydney College</div>
+        <div class="edu-dates">2004-2008</div>
+    </div>
+    
+                </div>
+
+                <!-- Right column: Achievements, Skills, Certs -->
+                <div class="right-column">
+                    <div class="section-header">HEADLINE ACHIEVEMENTS</div>
+                    <div class="section-divider"></div>
+                    
+        <div class="achievement">
+            <div class="achievement-icon">⭐</div>
+            <div class="achievement-title">32% YoY engagement increase</div>
+            <div class="achievement-desc">Overhauled teacher-side app based on user research at Discovery Education</div>
+        </div>
+        
+
+        <div class="achievement">
+            <div class="achievement-icon">🚀</div>
+            <div class="achievement-title">50% efficiency gain</div>
+            <div class="achievement-desc">Refactored flagship auditing product at Simplifya</div>
+        </div>
+        
+
+        <div class="achievement">
+            <div class="achievement-icon">🎯</div>
+            <div class="achievement-title">15% delivery improvement</div>
+            <div class="achievement-desc">Led cross-functional teams across multiple projects at Discovery Education</div>
+        </div>
+        
+
+                    <div class="section-header">SKILLS</div>
+                    <div class="section-divider"></div>
+                    
+
+                    <div class="section-header">CERTIFICATIONS</div>
+                    <div class="section-divider"></div>
+                    
+        <div class="cert-item">
+            <div class="cert-title">Pragmatic Marketing - Focus</div>
+            <div class="cert-desc">Find strategic business opportunities in market problems and build effective product roadmaps</div>
+        </div>
+        
+
+        <div class="cert-item">
+            <div class="cert-title">Pragmatic Marketing - Foundations</div>
+            <div class="cert-desc">Learn how to decode market needs and build irresistible products</div>
+        </div>
+        
+
+        <div class="cert-item">
+            <div class="cert-title">Pragmatic Marketing - Build</div>
+            <div class="cert-desc">Master the art of aligning product development with market needs</div>
+        </div>
+        
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    

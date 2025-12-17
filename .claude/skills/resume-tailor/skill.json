@@ -1,0 +1,11 @@
+{
+  "name": "resume-tailor",
+  "version": "1.0.0",
+  "description": "AI-powered resume and cover letter customization tool that uses supermemory for zero-hallucination career document generation",
+  "author": "Watson Mulkey",
+  "tags": ["resume", "cover-letter", "job-application", "supermemory", "career"],
+  "requirements": {
+    "tools": ["supermemory"],
+    "dependencies": ["anthropic>=0.39.0"]
+  }
+}
