@@ -338,3 +338,77 @@ def parse_markdown_to_docx_data(markdown_text: str) -> Dict[str, Any]:
     data['summary'] = data['summary'].strip()
 
     return data
+
+
+def generate_docx_cover_letter(markdown_text: str, output_path: Path) -> Path:
+    """
+    Generate ATS-friendly Word document cover letter from markdown.
+
+    Args:
+        markdown_text: Markdown formatted cover letter text
+        output_path: Path to save .docx file
+
+    Returns:
+        Path to generated .docx file
+    """
+    if not DOCX_AVAILABLE:
+        raise ImportError("python-docx is required. Install with: pip install python-docx")
+
+    doc = Document()
+
+    # Set document margins
+    sections = doc.sections
+    for section in sections:
+        section.top_margin = Inches(1.0)
+        section.bottom_margin = Inches(1.0)
+        section.left_margin = Inches(1.0)
+        section.right_margin = Inches(1.0)
+
+    # Parse the markdown text
+    lines = markdown_text.split('\n')
+
+    for i, line in enumerate(lines):
+        line_stripped = line.strip()
+
+        # Skip empty lines (but add spacing)
+        if not line_stripped:
+            if i > 0:  # Don't add space at the beginning
+                doc.add_paragraph()
+            continue
+
+        # Headers (##)
+        if line_stripped.startswith('## '):
+            header_text = line_stripped.replace('## ', '')
+            para = doc.add_paragraph()
+            run = para.add_run(header_text)
+            run.font.size = Pt(12)
+            run.font.bold = True
+            run.font.color.rgb = RGBColor(37, 99, 235)  # Blue accent
+            continue
+
+        # Bold text (**text**)
+        if '**' in line_stripped:
+            para = doc.add_paragraph()
+            # Simple bold handling
+            parts = line_stripped.split('**')
+            for j, part in enumerate(parts):
+                run = para.add_run(part)
+                if j % 2 == 1:  # Odd indices are bold
+                    run.font.bold = True
+                run.font.size = Pt(11)
+            continue
+
+        # Bullet points (lines starting with -)
+        if line_stripped.startswith('- '):
+            text = line_stripped[2:]  # Remove '- '
+            para = doc.add_paragraph(text, style='List Bullet')
+            para.runs[0].font.size = Pt(11)
+            continue
+
+        # Regular paragraphs
+        para = doc.add_paragraph(line_stripped)
+        para.runs[0].font.size = Pt(11)
+
+    # Save the document
+    doc.save(str(output_path))
+    return output_path

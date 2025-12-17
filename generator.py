@@ -36,7 +36,7 @@ except ImportError:
     HTML_AVAILABLE = False
 
 try:
-    from docx_generator import generate_docx_resume, parse_markdown_to_docx_data
+    from docx_generator import generate_docx_resume, parse_markdown_to_docx_data, generate_docx_cover_letter
     DOCX_AVAILABLE = True
 except ImportError:
     DOCX_AVAILABLE = False
@@ -682,24 +682,27 @@ Focus on quality over quantity - be concise and impactful within the 1-page cons
             # Fall back to basic template
             return self._generate_basic_resume(job_info, output_dir)
 
-        # Save markdown file
+        # Save markdown file (temporary - used to generate other formats)
         filename = f"Watson_Mulkey_Resume_{company.replace(' ', '_')}.md"
-        file_path = output_dir / filename
+        md_file_path = output_dir / filename
 
-        with open(file_path, 'w', encoding='utf-8') as f:
+        with open(md_file_path, 'w', encoding='utf-8') as f:
             f.write(resume_content)
+
+        files_to_cleanup = []
 
         # Generate PDF if requested
         if output_format in ['pdf', 'all'] and PDF_AVAILABLE:
             pdf_filename = f"Watson_Mulkey_Resume_{company.replace(' ', '_')}.pdf"
             pdf_path = output_dir / pdf_filename
             try:
-                markdown_to_pdf(file_path, pdf_path)
+                markdown_to_pdf(md_file_path, pdf_path)
                 self._log(f"[OK] PDF generated: {pdf_path}")
             except Exception as e:
                 self._log(f"Warning: PDF generation failed: {e}")
 
-        # Generate HTML if requested
+        # Generate HTML if requested (temporary - not needed for final output)
+        html_path = None
         if output_format in ['html', 'all'] and HTML_AVAILABLE:
             html_filename = f"Watson_Mulkey_Resume_{company.replace(' ', '_')}.html"
             html_path = output_dir / html_filename
@@ -708,7 +711,9 @@ Focus on quality over quantity - be concise and impactful within the 1-page cons
                 resume_data = self._parse_resume_for_html(resume_content, job_info)
                 generate_html_resume(resume_data, html_path)
                 self._log(f"[OK] HTML generated: {html_path}")
-                self._log(f"[TIP] Open HTML in browser and Print->Save as PDF for styled PDF")
+                # Mark HTML for cleanup if we're generating all formats
+                if output_format == 'all':
+                    files_to_cleanup.append(html_path)
             except Exception as e:
                 self._log(f"Warning: HTML generation failed: {e}")
 
@@ -725,7 +730,24 @@ Focus on quality over quantity - be concise and impactful within the 1-page cons
             except Exception as e:
                 self._log(f"Warning: DOCX generation failed: {e}")
 
-        return str(file_path)
+        # Clean up intermediate files when generating all formats
+        if output_format == 'all':
+            # Always remove markdown file
+            try:
+                md_file_path.unlink()
+                self._log(f"[OK] Removed temporary markdown file")
+            except Exception as e:
+                self._log(f"Warning: Could not remove markdown file: {e}")
+
+            # Remove HTML file if marked for cleanup
+            for cleanup_file in files_to_cleanup:
+                try:
+                    cleanup_file.unlink()
+                    self._log(f"[OK] Removed temporary HTML file")
+                except Exception as e:
+                    self._log(f"Warning: Could not remove {cleanup_file.name}: {e}")
+
+        return str(md_file_path)
 
     def _parse_resume_for_html(self, resume_text: str, job_info: Dict[str, Any]) -> Dict[str, Any]:
         """Parse resume text into structured data for HTML template."""
@@ -1126,14 +1148,47 @@ Generate a cover letter that feels genuinely written by Watson and makes hiring 
             # Re-raise instead of falling back silently - user needs to know
             raise RuntimeError(error_msg) from e
 
-        # Save to file (only reached if validation passed)
+        # Save markdown file (temporary - will be used to generate other formats)
         filename = f"Watson_Mulkey_{company.replace(' ', '_')}_CoverLetter.md"
-        file_path = output_dir / filename
+        md_file_path = output_dir / filename
 
-        with open(file_path, 'w', encoding='utf-8') as f:
+        with open(md_file_path, 'w', encoding='utf-8') as f:
             f.write(cover_letter_content)
 
-        return str(file_path)
+        generated_files = [str(md_file_path)]
+
+        # Generate DOCX if requested (ATS-friendly Word format)
+        if output_format in ['docx', 'all'] and DOCX_AVAILABLE:
+            docx_filename = f"Watson_Mulkey_{company.replace(' ', '_')}_CoverLetter.docx"
+            docx_path = output_dir / docx_filename
+            try:
+                generate_docx_cover_letter(cover_letter_content, docx_path)
+                self._log(f"[OK] Cover letter DOCX generated: {docx_path}", force=True)
+                generated_files.append(str(docx_path))
+            except Exception as e:
+                self._log(f"Warning: Cover letter DOCX generation failed: {e}", force=True)
+
+        # Generate PDF if requested
+        if output_format in ['pdf', 'all'] and PDF_AVAILABLE:
+            pdf_filename = f"Watson_Mulkey_{company.replace(' ', '_')}_CoverLetter.pdf"
+            pdf_path = output_dir / pdf_filename
+            try:
+                markdown_to_pdf(md_file_path, pdf_path)
+                self._log(f"[OK] Cover letter PDF generated: {pdf_path}", force=True)
+                generated_files.append(str(pdf_path))
+            except Exception as e:
+                self._log(f"Warning: Cover letter PDF generation failed: {e}", force=True)
+
+        # Delete markdown file if other formats were generated successfully
+        if output_format == 'all' and len(generated_files) > 1:
+            try:
+                md_file_path.unlink()
+                self._log(f"[OK] Removed temporary markdown file", force=True)
+                generated_files.remove(str(md_file_path))
+            except Exception as e:
+                self._log(f"Warning: Could not remove markdown file: {e}", force=True)
+
+        return generated_files[0] if generated_files else str(md_file_path)
 
     def _generate_basic_cover_letter(self, job_info: Dict[str, Any], output_dir: Path) -> str:
         """Generate basic template cover letter (fallback when no API)."""
