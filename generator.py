@@ -630,6 +630,7 @@ CRITICAL ATS OPTIMIZATION REQUIREMENTS:
 8. STANDARD FORMATTING: Use simple, standard section headers. Avoid tables, graphics, or complex formatting
 9. KEYWORD-RICH SUMMARY: Professional summary should incorporate 3-5 keywords from job description while reading naturally
 10. RELEVANT EXPERIENCE: Focus on 3-4 most relevant roles that match job requirements
+11. PUNCTUATION: Use semicolons to connect related independent clauses instead of em-dashes (Watson's personal writing style)
 
 Generate a professional resume in Markdown format with these ATS-friendly sections:
 - Header with name and contact info (USE EXACT CONTACT INFO PROVIDED ABOVE - no modifications)
@@ -717,18 +718,8 @@ Focus on quality over quantity - be concise and impactful within the 1-page cons
             except Exception as e:
                 self._log(f"Warning: HTML generation failed: {e}")
 
-        # Generate DOCX if requested (ATS-friendly Word format)
-        if output_format in ['docx', 'all'] and DOCX_AVAILABLE:
-            docx_filename = f"Watson_Mulkey_Resume_{company.replace(' ', '_')}.docx"
-            docx_path = output_dir / docx_filename
-            try:
-                # Parse resume content into structured data for DOCX
-                docx_data = parse_markdown_to_docx_data(resume_content)
-                generate_docx_resume(docx_data, docx_path)
-                self._log(f"[OK] DOCX generated: {docx_path}")
-                self._log(f"[TIP] DOCX format is preferred by most ATS systems")
-            except Exception as e:
-                self._log(f"Warning: DOCX generation failed: {e}")
+        # DOCX generation disabled for resumes - PDF is sufficient
+        # Users prefer PDF format only for resumes
 
         # Clean up intermediate files when generating all formats
         if output_format == 'all':
@@ -1103,8 +1094,9 @@ CRITICAL WRITING GUIDELINES:
 5. SPECIFICITY: Use exact metrics (32%, 50%, $50M, 20+ people) - they're powerful
 6. CONNECTION: Every example should explicitly tie back to job requirements
 7. AUTHENTICITY: Avoid corporate jargon - use Watson's natural phrases
-8. LENGTH: 350-450 words (concise but substantive)
-9. PERSONALIZATION: Reference specific aspects of {company} or the role that genuinely align with Watson's experience/values
+8. PUNCTUATION: Use semicolons to connect related independent clauses instead of em-dashes (Watson's personal writing style)
+9. LENGTH: 350-450 words (concise but substantive)
+10. PERSONALIZATION: Reference specific aspects of {company} or the role that genuinely align with Watson's experience/values
 
 Generate a cover letter that feels genuinely written by Watson and makes hiring managers think "This person gets it."
 """
