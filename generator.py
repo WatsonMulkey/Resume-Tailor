@@ -798,29 +798,35 @@ Focus on quality over quantity - be concise and impactful within the 1-page cons
                     'bullets': []
                 }
             elif in_experience and line_stripped and '|' in line and not line.startswith('-'):
-                # New format: Company | Job Title | Dates
+                # New format: **Job Title** | Company | Dates
                 if current_job:
                     data['experience'].append(current_job)
 
-                parts = [p.strip() for p in line_stripped.split('|')]
+                parts = [p.strip().strip('*') for p in line_stripped.split('|')]  # Strip markdown bold
                 if len(parts) >= 3:
                     current_job = {
-                        'title': parts[1],
-                        'company': parts[0],
+                        'title': parts[0],  # Job title is first
+                        'company': parts[1],  # Company is second
                         'dates': parts[2],
                         'location': '',
                         'bullets': []
                     }
                 elif len(parts) == 2:
                     current_job = {
-                        'title': parts[1],
-                        'company': parts[0],
+                        'title': parts[0],  # Job title is first
+                        'company': parts[1],  # Company is second
                         'dates': '',
                         'location': '',
                         'bullets': []
                     }
             elif in_experience and current_job:
-                if line.startswith('**') and line.endswith('**') and not current_job['title']:
+                # Handle #### header as job title (fix for markdown leak)
+                if line.startswith('####') and not current_job['title']:
+                    current_job['title'] = line_stripped.replace('####', '').strip()
+                elif line.startswith('# ') and not line.startswith('##') and not current_job['title']:
+                    # Also handle single # as fallback
+                    current_job['title'] = line_stripped[2:].strip()
+                elif line.startswith('**') and line.endswith('**') and not current_job['title']:
                     # First bold line after header is the job title
                     current_job['title'] = line.strip('*')
                 elif line.startswith('- '):

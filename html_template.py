@@ -26,7 +26,7 @@ def generate_html_resume(resume_data: dict, output_html: Path):
         body {
             font-family: 'Calibri', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
             font-size: 10.5pt;
-            line-height: 1.5;
+            line-height: 1.35;
             color: #2c3e50;
             background: #f5f5f5;
             -webkit-font-smoothing: antialiased;
@@ -44,30 +44,33 @@ def generate_html_resume(resume_data: dict, output_html: Path):
 
         /* Header */
         .header {
-            margin-bottom: 24px;
+            margin-bottom: 12px;
             border-bottom: 3px solid #2563EB;
-            padding-bottom: 16px;
+            padding-bottom: 10px;
         }
 
         .name {
-            font-size: 28pt;
+            font-size: 34pt;
             font-weight: 700;
             color: #1a1a1a;
-            margin-bottom: 6px;
-            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+            letter-spacing: -1px;
+            line-height: 1.1;
         }
 
         .title {
             font-size: 13pt;
             font-weight: 600;
             color: #2563EB;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
+            line-height: 1.2;
         }
 
         .contact-info {
             font-size: 9.5pt;
             color: #666;
-            margin-top: 8px;
+            margin-top: 4px;
+            line-height: 1.3;
         }
 
         .contact-info a {
@@ -82,7 +85,7 @@ def generate_html_resume(resume_data: dict, output_html: Path):
         /* Section divider */
         .section-divider {
             border-bottom: 1.5px solid #e0e0e0;
-            margin: 8px 0 14px 0;
+            margin: 4px 0 8px 0;
         }
 
         /* Two column layout */
@@ -104,10 +107,11 @@ def generate_html_resume(resume_data: dict, output_html: Path):
             font-size: 11pt;
             font-weight: 700;
             color: #1a1a1a;
-            margin-top: 20px;
-            margin-bottom: 4px;
+            margin-top: 12px;
+            margin-bottom: 3px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            line-height: 1.2;
         }
 
         .section-header:first-child {
@@ -116,7 +120,7 @@ def generate_html_resume(resume_data: dict, output_html: Path):
 
         /* Job entry */
         .job-entry {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             position: relative;
             padding-left: 28px;
         }
@@ -134,22 +138,24 @@ def generate_html_resume(resume_data: dict, output_html: Path):
             font-size: 10.5pt;
             font-weight: 600;
             color: #1a1a1a;
-            margin-bottom: 3px;
-            line-height: 1.3;
+            margin-bottom: 2px;
+            line-height: 1.2;
         }
 
         .company-name {
             font-size: 10pt;
             font-weight: 600;
             color: #2563EB;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
+            line-height: 1.2;
         }
 
         .job-meta {
             font-size: 9pt;
             color: #777;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             font-style: italic;
+            line-height: 1.3;
         }
 
         .job-bullets {
@@ -160,10 +166,10 @@ def generate_html_resume(resume_data: dict, output_html: Path):
         .job-bullets li {
             font-size: 9.5pt;
             color: #333;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             padding-left: 14px;
             position: relative;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         .job-bullets li:before {
@@ -176,7 +182,7 @@ def generate_html_resume(resume_data: dict, output_html: Path):
 
         /* Achievements */
         .achievement {
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             padding-left: 24px;
             position: relative;
         }
@@ -199,7 +205,7 @@ def generate_html_resume(resume_data: dict, output_html: Path):
         .achievement-desc {
             font-size: 9.5pt;
             color: #555;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         /* Skills */
@@ -220,7 +226,7 @@ def generate_html_resume(resume_data: dict, output_html: Path):
 
         /* Certifications */
         .cert-item {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .cert-title {
@@ -233,7 +239,7 @@ def generate_html_resume(resume_data: dict, output_html: Path):
         .cert-desc {
             font-size: 9pt;
             color: #555;
-            line-height: 1.3;
+            line-height: 1.4;
         }
 
         /* Education */
@@ -432,7 +438,8 @@ def build_achievements_html(achievements):
     if not achievements:
         return ""
 
-    icons = ['⭐', '🚀', '🎯', '📈', '💡']
+    # Use Unicode symbols that render reliably in PDFs (no emoji)
+    icons = ['★', '▶', '●', '▲', '◆']
     html_parts = []
 
     for i, ach in enumerate(achievements):
