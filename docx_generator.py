@@ -9,19 +9,10 @@ from pathlib import Path
 from typing import Dict, Any
 import re
 
-# Import contact info to prevent hallucination
-try:
-    from import_career_data import CAREER_DATA
-    CONTACT_INFO = CAREER_DATA["contact_info"]
-except ImportError:
-    # Fallback hardcoded contact info
-    CONTACT_INFO = {
-        "name": "M. Watson Mulkey",
-        "email": "watsonmulkey@gmail.com",
-        "phone": "434-808-2493",
-        "linkedin": "linkedin.com/in/watsonmulkey",
-        "location": "Denver, Colorado"
-    }
+# Import config and contact info
+from config import get_contact_info
+from resume_parser import parse_markdown_resume, ResumeData
+CONTACT_INFO = get_contact_info()
 
 try:
     from docx import Document
@@ -31,6 +22,36 @@ try:
 except ImportError:
     DOCX_AVAILABLE = False
     print("Warning: python-docx not available. Install with: pip install python-docx")
+
+
+def parse_markdown_to_docx_data(markdown_text: str) -> Dict[str, Any]:
+    """
+    Parse markdown resume into structured data for DOCX generation.
+
+    Uses the shared resume_parser module and converts to dict format.
+    """
+    resume_data = parse_markdown_resume(markdown_text)
+
+    # Convert ResumeData to dict format expected by generate_docx_resume
+    return {
+        'name': resume_data.name.upper(),
+        'title': resume_data.title,
+        'contact_info': resume_data.contact_info,
+        'summary': resume_data.summary,
+        'experience': [
+            {
+                'company': job.company,
+                'title': job.title,
+                'dates': job.dates,
+                'bullets': job.bullets
+            }
+            for job in resume_data.experience
+        ],
+        'achievements': resume_data.achievements,
+        'skills': [f"{cat}: {skills}" for cat, skills in resume_data.skills.items()],
+        'education': resume_data.education,
+        'certifications': resume_data.certifications
+    }
 
 
 def generate_docx_resume(resume_data: Dict[str, Any], output_path: Path) -> Path:
@@ -199,145 +220,6 @@ def add_section_header(doc: Document, text: str):
     header_run.font.size = Pt(12)
     header_run.font.bold = True
     header_run.font.color.rgb = RGBColor(0, 0, 0)
-
-
-def parse_markdown_to_docx_data(markdown_text: str) -> Dict[str, Any]:
-    """
-    Parse markdown resume into structured data for DOCX generation.
-
-    This is a simple parser - for production you might want more robust parsing.
-    """
-    lines = markdown_text.split('\n')
-
-    data = {
-        'name': CONTACT_INFO['name'].upper(),
-        'title': 'Senior Product Manager',
-        'contact_info': f"{CONTACT_INFO['phone']} | {CONTACT_INFO['email']} | {CONTACT_INFO['linkedin']} | {CONTACT_INFO['location']}",
-        'summary': '',
-        'experience': [],
-        'achievements': [],
-        'skills': [],
-        'education': {},
-        'certifications': []
-    }
-
-    current_section = None
-    current_job = None
-
-    for line in lines:
-        line_stripped = line.strip()
-
-        # Skip empty lines
-        if not line_stripped:
-            continue
-
-        # Parse name (first heading or first non-empty line)
-        if not data.get('name_set'):
-            if line.startswith('# '):
-                data['name'] = line.replace('#', '').strip()
-                data['name_set'] = True
-                continue
-            elif not line.startswith('#') and len(line_stripped) > 3 and '|' not in line:
-                data['name'] = line_stripped
-                data['name_set'] = True
-                continue
-
-        # Parse contact info (line with | separators near the top)
-        if not data.get('contact_set') and '|' in line and '@' in line:
-            data['contact_info'] = line_stripped
-            data['contact_set'] = True
-            continue
-
-        # Section headers
-        if line.startswith('## '):
-            section = line.replace('##', '').strip().upper()
-            if 'SUMMARY' in section:
-                current_section = 'summary'
-            elif 'EXPERIENCE' in section:
-                current_section = 'experience'
-            elif 'ACHIEVEMENT' in section:
-                current_section = 'achievements'
-            elif 'SKILL' in section:
-                current_section = 'skills'
-            elif 'EDUCATION' in section:
-                current_section = 'education'
-            elif 'CERTIFICATION' in section:
-                current_section = 'certifications'
-            continue
-
-        # Parse content based on current section
-        if current_section == 'summary':
-            data['summary'] += line_stripped + ' '
-
-        elif current_section == 'experience':
-            if line.startswith('###'):
-                # Save previous job
-                if current_job:
-                    data['experience'].append(current_job)
-
-                # New job entry: ### Company (dates)
-                header = line.replace('###', '').strip()
-                company = header
-                dates = ''
-
-                # Extract dates from parentheses
-                if '(' in header and ')' in header:
-                    parts = header.split('(')
-                    company = parts[0].strip()
-                    dates = parts[1].rstrip(')').strip()
-
-                current_job = {
-                    'company': company,
-                    'title': '',
-                    'dates': dates,
-                    'bullets': []
-                }
-            elif line.startswith('**') and line.endswith('**') and current_job and not current_job.get('title'):
-                # Job title line
-                current_job['title'] = line.strip('*').strip()
-            elif '|' in line and not line.startswith('-') and not line.startswith('**'):
-                # Alternative format: Company | Title | Dates
-                if current_job:
-                    data['experience'].append(current_job)
-
-                parts = [p.strip() for p in line_stripped.split('|')]
-                current_job = {
-                    'company': parts[0] if len(parts) > 0 else '',
-                    'title': parts[1] if len(parts) > 1 else '',
-                    'dates': parts[2] if len(parts) > 2 else '',
-                    'bullets': []
-                }
-            elif line.startswith('- ') and current_job:
-                current_job['bullets'].append(line[2:].strip())
-
-        elif current_section == 'achievements':
-            if line.startswith('- '):
-                data['achievements'].append(line[2:].strip())
-
-        elif current_section == 'skills':
-            if line.startswith('- ') or line.startswith('**'):
-                skill = line.replace('**', '').replace('- ', '').strip()
-                if skill:
-                    data['skills'].append(skill)
-
-        elif current_section == 'education':
-            if not data['education'].get('degree'):
-                # Simple education parser
-                if 'Bachelor' in line or 'Master' in line:
-                    data['education']['degree'] = line_stripped
-
-        elif current_section == 'certifications':
-            if line.startswith('- '):
-                data['certifications'].append(line[2:].strip())
-
-    # Save last job
-    if current_job:
-        data['experience'].append(current_job)
-
-    # Clean up summary
-    data['summary'] = data['summary'].strip()
-
-    return data
 
 
 def generate_docx_cover_letter(markdown_text: str, output_path: Path) -> Path:

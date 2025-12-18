@@ -302,25 +302,6 @@ Started career at coding school (The Iron Yard) supporting career changers"""
             "personal_values": self._get_fallback_personal_values()
         }
 
-    def _build_search_queries(self, job_info: Dict[str, Any]) -> List[str]:
-        """Build targeted search queries for supermemory."""
-        queries = []
-
-        # Search for skills
-        for skill in job_info.get("required_skills", []):
-            queries.append(f"skill: {skill}")
-
-        # Search for relevant responsibilities
-        for resp in job_info.get("responsibilities", []):
-            queries.append(f"responsibility: {resp}")
-
-        # Search for company mission alignment if mentioned
-        if job_info.get("company_mission"):
-            queries.append(f"values mission: {job_info['company_mission']}")
-
-        return queries
-
-
 def call_claude_with_retry(
     client: anthropic.Anthropic,
     max_retries: int = 3,
