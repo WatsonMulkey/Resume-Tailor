@@ -742,13 +742,43 @@ class ResumeTailorGUI:
                     f"Failed to save skipped skill:\n\n{str(e)}"
                 )
 
+        def on_skill_ignored(skill_name):
+            """Callback when user ignores a non-skill term."""
+            try:
+                # Load current career data
+                career_data = load_career_data()
+
+                # Add to ignored terms if not already there
+                if skill_name.lower() not in [t.lower() for t in career_data.ignored_terms]:
+                    career_data.ignored_terms.append(skill_name)
+                    save_career_data(career_data)
+                    self.log_status(f">> Ignored term: {skill_name}")
+
+                # Continue with remaining skills
+                if remaining_skills:
+                    from tkinter import messagebox
+                    result = messagebox.askyesno(
+                        "More Skills",
+                        f"{len(remaining_skills)} more skill(s) detected.\n\nContinue adding?"
+                    )
+                    if result:
+                        self._show_discovery_for_skills(remaining_skills, job_description)
+
+            except Exception as e:
+                from tkinter import messagebox
+                messagebox.showerror(
+                    "Save Failed",
+                    f"Failed to save ignored term:\n\n{str(e)}"
+                )
+
         # Show dialog for this skill (blocking)
         dialog = MultiStepDiscoveryDialog(
             self.root,
             skill_name,
             job_description,
             on_complete=on_skill_saved,
-            on_skip=on_skill_skipped
+            on_skip=on_skill_skipped,
+            on_ignore=on_skill_ignored
         )
         # Wait for dialog to close before continuing
         self.root.wait_window(dialog.dialog)

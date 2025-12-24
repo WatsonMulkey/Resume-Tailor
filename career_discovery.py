@@ -71,9 +71,10 @@ class SkillDetector:
         Returns:
             List of detected skill names
         """
-        # Get existing skills and skipped skills (lowercase for comparison)
+        # Get existing skills, skipped skills, and ignored terms (lowercase for comparison)
         existing_skills = {skill.name.lower() for skill in career_data.skills}
         skipped_skills = {skill.lower() for skill in career_data.skipped_skills}
+        ignored_terms = {term.lower() for term in career_data.ignored_terms}
 
         # Detect skills in job description
         detected = set()
@@ -85,7 +86,8 @@ class SkillDetector:
             pattern = r'\b' + re.escape(keyword) + r'\b'
             if (re.search(pattern, job_lower, re.IGNORECASE) and
                 keyword not in existing_skills and
-                keyword not in skipped_skills):
+                keyword not in skipped_skills and
+                keyword not in ignored_terms):
                 # Capitalize properly
                 detected.add(self._capitalize_skill(keyword))
 
@@ -102,6 +104,7 @@ class SkillDetector:
                 # Additional filtering: must be in common tech acronyms or frameworks
                 if (match.lower() not in existing_skills and
                     match.lower() not in skipped_skills and
+                    match.lower() not in ignored_terms and
                     (match.endswith(('.js', '.py')) or  # Framework with extension
                      match.lower() in self.tech_keywords or  # Known tech keyword
                      len(match) >= 4)):  # Longer acronyms are safer (REST, JSON, HTTP)
@@ -425,3 +428,54 @@ def detect_hallucinations(text: str, job_description: str = "") -> List[str]:
     """
     detector = HallucinationDetector()
     return detector.detect(text, job_description)
+
+
+def get_skill_context(skill_name: str, job_description: str, words_before: int = 5, words_after: int = 5) -> str:
+    """
+    Extract context around a skill mention in job description.
+
+    Args:
+        skill_name: The skill to find context for
+        job_description: The job description text
+        words_before: Number of words to show before the skill
+        words_after: Number of words to show after the skill
+
+    Returns:
+        Context string showing surrounding words, or empty if not found
+    """
+    # Find the skill in the job description (case insensitive)
+    import re
+    pattern = r'\b' + re.escape(skill_name) + r'\b'
+    match = re.search(pattern, job_description, re.IGNORECASE)
+
+    if not match:
+        return ""
+
+    # Get the position of the match
+    start_pos = match.start()
+    end_pos = match.end()
+
+    # Split into words
+    words = job_description.split()
+
+    # Find which word index the match is at
+    char_count = 0
+    match_word_idx = 0
+    for i, word in enumerate(words):
+        char_count += len(word) + 1  # +1 for space
+        if char_count > start_pos:
+            match_word_idx = i
+            break
+
+    # Extract surrounding words
+    start_idx = max(0, match_word_idx - words_before)
+    end_idx = min(len(words), match_word_idx + words_after + 1)
+
+    # Build context string
+    context_words = words[start_idx:end_idx]
+    context = " ".join(context_words)
+
+    # Highlight the skill in the context
+    context = re.sub(pattern, f"**{match.group()}**", context, flags=re.IGNORECASE)
+
+    return f"...{context}..."

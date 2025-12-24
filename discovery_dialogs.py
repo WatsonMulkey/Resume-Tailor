@@ -12,7 +12,8 @@ from typing import Optional, Callable, Dict, Any
 from models import DiscoveredSkill
 from career_discovery import (
     validate_discovered_skill,
-    detect_hallucinations
+    detect_hallucinations,
+    get_skill_context
 )
 
 
@@ -34,13 +35,15 @@ class MultiStepDiscoveryDialog:
         skill_name: str,
         job_description: str = "",
         on_complete: Optional[Callable] = None,
-        on_skip: Optional[Callable] = None
+        on_skip: Optional[Callable] = None,
+        on_ignore: Optional[Callable] = None
     ):
         self.parent = parent
         self.skill_name = skill_name
         self.job_description = job_description
         self.on_complete = on_complete
         self.on_skip = on_skip
+        self.on_ignore = on_ignore
 
         # Dialog data
         self.has_experience = None
@@ -170,6 +173,30 @@ class MultiStepDiscoveryDialog:
             justify=tk.LEFT
         ).pack(pady=20)
 
+        # Show context if available
+        if self.job_description:
+            context = get_skill_context(self.skill_name, self.job_description)
+            if context:
+                tk.Label(
+                    self.content_frame,
+                    text="Context from job description:",
+                    font=self.mono_font,
+                    fg=self.warning_color,
+                    bg=self.bg_color,
+                    justify=tk.LEFT
+                ).pack(pady=(0, 5))
+
+                context_label = tk.Label(
+                    self.content_frame,
+                    text=context,
+                    font=self.mono_font,
+                    fg=self.accent_color,
+                    bg=self.bg_color,
+                    justify=tk.LEFT,
+                    wraplength=600
+                )
+                context_label.pack(pady=(0, 20))
+
         self.experience_var = tk.StringVar(value="yes")
 
         tk.Radiobutton(
@@ -203,6 +230,18 @@ class MultiStepDiscoveryDialog:
             value="no",
             font=self.mono_font,
             fg=self.fg_color,
+            bg=self.bg_color,
+            selectcolor=self.text_bg,
+            activebackground=self.bg_color
+        ).pack(anchor=tk.W, padx=40, pady=5)
+
+        tk.Radiobutton(
+            self.content_frame,
+            text="Ignore - this isn't a skill",
+            variable=self.experience_var,
+            value="ignore",
+            font=self.mono_font,
+            fg=self.warning_color,
             bg=self.bg_color,
             selectcolor=self.text_bg,
             activebackground=self.bg_color
@@ -448,6 +487,17 @@ class MultiStepDiscoveryDialog:
                 # Call on_skip callback before closing
                 if self.on_skip:
                     self.on_skip(self.skill_name)
+                self.dialog.destroy()
+                return False
+            elif self.experience_var.get() == "ignore":
+                messagebox.showinfo(
+                    "Ignored",
+                    f"'{self.skill_name}' will be permanently ignored.\n\n"
+                    f"It won't be detected again in future job descriptions."
+                )
+                # Call on_ignore callback before closing
+                if self.on_ignore:
+                    self.on_ignore(self.skill_name)
                 self.dialog.destroy()
                 return False
 

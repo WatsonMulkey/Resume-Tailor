@@ -5,7 +5,7 @@ a = Analysis(
     ['resume_tailor_gui.py'],
     pathex=[],
     binaries=[],
-    datas=[('import_career_data.py', '.'), ('generator.py', '.'), ('pdf_generator.py', '.'), ('html_template.py', '.'), ('docx_generator.py', '.'), ('conflict_detector.py', '.'), ('config.py', '.'), ('.env', '.')],
+    datas=[('import_career_data.py', '.'), ('generator.py', '.'), ('pdf_generator.py', '.'), ('html_template.py', '.'), ('docx_generator.py', '.'), ('conflict_detector.py', '.'), ('config.py', '.'), ('.env', '.'), ('models.py', '.'), ('career_data_manager.py', '.'), ('career_discovery.py', '.'), ('discovery_dialogs.py', '.')],
     hiddenimports=['anthropic', 'dotenv', 'docx', 'reportlab'],
     hookspath=[],
     hooksconfig={},

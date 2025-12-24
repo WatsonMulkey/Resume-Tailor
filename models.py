@@ -158,6 +158,7 @@ class CareerData(BaseModel):
     projects: List[Project] = Field(default_factory=list)
     personal_values: List[PersonalValue] = Field(default_factory=list)
     skipped_skills: List[str] = Field(default_factory=list)  # Skills user explicitly rejected during discovery
+    ignored_terms: List[str] = Field(default_factory=list)  # Non-skill terms to permanently ignore (e.g., "SWAG" = gear, not skill)
 
     @model_validator(mode='after')
     def validate_data_completeness(self):
