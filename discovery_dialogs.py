@@ -33,12 +33,14 @@ class MultiStepDiscoveryDialog:
         parent,
         skill_name: str,
         job_description: str = "",
-        on_complete: Optional[Callable] = None
+        on_complete: Optional[Callable] = None,
+        on_skip: Optional[Callable] = None
     ):
         self.parent = parent
         self.skill_name = skill_name
         self.job_description = job_description
         self.on_complete = on_complete
+        self.on_skip = on_skip
 
         # Dialog data
         self.has_experience = None
@@ -119,7 +121,7 @@ class MultiStepDiscoveryDialog:
             font=self.mono_font,
             fg=self.fg_color,
             bg=self.bg_color,
-            command=self.dialog.destroy
+            command=self._handle_skip
         )
         self.skip_btn.pack(side=tk.LEFT, padx=5)
 
@@ -397,6 +399,12 @@ class MultiStepDiscoveryDialog:
             # Show previous step
             self._show_step(self.current_step - 1)
 
+    def _handle_skip(self):
+        """Handle user skipping this skill."""
+        if self.on_skip:
+            self.on_skip(self.skill_name)
+        self.dialog.destroy()
+
     def _go_next(self):
         """Go to next step or finish."""
         # Validate current step
@@ -437,6 +445,9 @@ class MultiStepDiscoveryDialog:
                     "No Experience",
                     f"Okay, we won't add {self.skill_name} to your career data."
                 )
+                # Call on_skip callback before closing
+                if self.on_skip:
+                    self.on_skip(self.skill_name)
                 self.dialog.destroy()
                 return False
 

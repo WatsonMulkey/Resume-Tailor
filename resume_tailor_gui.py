@@ -713,12 +713,42 @@ class ResumeTailorGUI:
                     f"Failed to save skill:\n\n{str(e)}"
                 )
 
+        def on_skill_skipped(skill_name):
+            """Callback when user skips a skill."""
+            try:
+                # Load current career data
+                career_data = load_career_data()
+
+                # Add to skipped skills if not already there
+                if skill_name.lower() not in [s.lower() for s in career_data.skipped_skills]:
+                    career_data.skipped_skills.append(skill_name)
+                    save_career_data(career_data)
+                    self.log_status(f">> Skipped skill: {skill_name}")
+
+                # Continue with remaining skills
+                if remaining_skills:
+                    from tkinter import messagebox
+                    result = messagebox.askyesno(
+                        "More Skills",
+                        f"{len(remaining_skills)} more skill(s) detected.\n\nContinue adding?"
+                    )
+                    if result:
+                        self._show_discovery_for_skills(remaining_skills, job_description)
+
+            except Exception as e:
+                from tkinter import messagebox
+                messagebox.showerror(
+                    "Save Failed",
+                    f"Failed to save skipped skill:\n\n{str(e)}"
+                )
+
         # Show dialog for this skill
         MultiStepDiscoveryDialog(
             self.root,
             skill_name,
             job_description,
-            on_complete=on_skill_saved
+            on_complete=on_skill_saved,
+            on_skip=on_skill_skipped
         )
 
     def restore_from_backup(self):

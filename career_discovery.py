@@ -71,29 +71,40 @@ class SkillDetector:
         Returns:
             List of detected skill names
         """
-        # Get existing skills (lowercase for comparison)
+        # Get existing skills and skipped skills (lowercase for comparison)
         existing_skills = {skill.name.lower() for skill in career_data.skills}
+        skipped_skills = {skill.lower() for skill in career_data.skipped_skills}
 
         # Detect skills in job description
         detected = set()
         job_lower = job_description.lower()
 
-        # Method 1: Keyword matching
+        # Method 1: Keyword matching (word boundary only)
         for keyword in self.tech_keywords:
-            if keyword in job_lower and keyword not in existing_skills:
+            # Use word boundaries to avoid false matches (e.g., 'r' in 'for')
+            pattern = r'\b' + re.escape(keyword) + r'\b'
+            if (re.search(pattern, job_lower, re.IGNORECASE) and
+                keyword not in existing_skills and
+                keyword not in skipped_skills):
                 # Capitalize properly
                 detected.add(self._capitalize_skill(keyword))
 
-        # Method 2: Technology detection (regex patterns)
+        # Method 2: Technology detection (regex patterns - only known tech formats)
+        # Only match .js/.py frameworks and 3+ letter acronyms commonly used in tech
         tech_patterns = [
-            r'\b([A-Z][a-z]+(?:\.[a-z]+)?)\b',  # React.js, Vue.js, Next.js
-            r'\b([A-Z]{2,})\b',  # AWS, GCP, SQL
+            r'\b([A-Z][a-z]+\.[a-z]+)\b',  # React.js, Vue.js, Next.js (must have .js/.py)
+            r'\b([A-Z]{3,})\b',  # AWS, GCP, SQL (3+ letters, filters out PM, US, OR, etc.)
         ]
 
         for pattern in tech_patterns:
             matches = re.findall(pattern, job_description)
             for match in matches:
-                if match.lower() not in existing_skills and len(match) > 2:
+                # Additional filtering: must be in common tech acronyms or frameworks
+                if (match.lower() not in existing_skills and
+                    match.lower() not in skipped_skills and
+                    (match.endswith(('.js', '.py')) or  # Framework with extension
+                     match.lower() in self.tech_keywords or  # Known tech keyword
+                     len(match) >= 4)):  # Longer acronyms are safer (REST, JSON, HTTP)
                     detected.add(match)
 
         # Convert to sorted list (by frequency in job description)
