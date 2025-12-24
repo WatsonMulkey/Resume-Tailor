@@ -206,8 +206,8 @@ def main():
     if args.output_dir:
         output_dir = Path(args.output_dir)
     else:
-        # Default: C:\Users\watso\OneDrive\Desktop\Jobs\<company-name>
-        base_jobs_dir = Path(r"C:\Users\watso\OneDrive\Desktop\Jobs")
+        # Default: Use local Documents folder to avoid OneDrive sync issues
+        base_jobs_dir = Path.home() / "Documents" / "Jobs"
         safe_company_name = company_name.replace(' ', '_').replace('/', '_').replace('\\', '_')
         output_dir = base_jobs_dir / safe_company_name
 

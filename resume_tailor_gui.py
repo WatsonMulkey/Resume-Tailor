@@ -742,14 +742,16 @@ class ResumeTailorGUI:
                     f"Failed to save skipped skill:\n\n{str(e)}"
                 )
 
-        # Show dialog for this skill
-        MultiStepDiscoveryDialog(
+        # Show dialog for this skill (blocking)
+        dialog = MultiStepDiscoveryDialog(
             self.root,
             skill_name,
             job_description,
             on_complete=on_skill_saved,
             on_skip=on_skill_skipped
         )
+        # Wait for dialog to close before continuing
+        self.root.wait_window(dialog.dialog)
 
     def restore_from_backup(self):
         """Restore career data from backup file."""
@@ -858,6 +860,31 @@ class ResumeTailorGUI:
         # Disable button during generation
         self.generate_btn.config(state=tk.DISABLED)
 
+        # If discovery mode enabled, run discovery FIRST (blocking)
+        if self.discovery_var.get():
+            self.log_status(">> Discovery mode enabled - detecting skills...")
+            from career_discovery import detect_missing_skills
+
+            missing_skills = detect_missing_skills(job_desc, max_skills=10)
+
+            if missing_skills:
+                # Ask if user wants to add skills
+                result = messagebox.askyesno(
+                    "Skills Discovered",
+                    f"The job description mentions {len(missing_skills)} skill(s) "
+                    f"not in your career data:\n\n" +
+                    "\n".join(f"  • {skill}" for skill in missing_skills[:10]) +
+                    f"\n\nWould you like to add any of these?"
+                )
+
+                if result:
+                    # Show discovery dialogs (blocking)
+                    self._show_discovery_for_skills(missing_skills, job_desc)
+                    # Discovery complete - now proceed to generation
+                    self.log_status(">> Discovery complete - starting generation...")
+            else:
+                self.log_status(">> No new skills detected - proceeding to generation...")
+
         # Run generation in background thread
         thread = threading.Thread(
             target=self._generate_thread,
@@ -902,20 +929,14 @@ class ResumeTailorGUI:
             self.log_status(f">> Output directory: {base_dir}")
             self.log_status("")
 
-            # Create discovery callback if enabled
-            discovery_callback = None
-            if self.discovery_var.get():
-                discovery_callback = self._create_discovery_callback()
-
-            # Generate documents
+            # Generate documents (discovery already completed before this thread started)
             results = generator.generate(
                 job_description=job_desc,
                 company_name=company_name,
                 output_dir=base_dir,
                 resume_only=not self.cover_letter_var.get(),
                 cover_letter_only=not self.resume_var.get(),
-                output_format="all",
-                discovery_callback=discovery_callback
+                output_format="all"
             )
 
             # Validate output files for placeholder text before declaring success
