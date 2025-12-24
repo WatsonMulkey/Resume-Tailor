@@ -52,10 +52,10 @@ INITIAL_RETRY_DELAY = 1.0  # seconds
 # Output Settings
 # ==========================================
 
-# Default output directory for generated files
+# Default output directory for generated files (local to avoid OneDrive sync issues)
 DEFAULT_OUTPUT_DIR = Path(os.environ.get(
     "RESUME_OUTPUT_DIR",
-    str(Path.home() / "OneDrive" / "Desktop" / "Jobs")
+    str(Path.home() / "Documents" / "Jobs")
 ))
 
 # Output format preferences
@@ -102,3 +102,20 @@ def check_optional_dependency(module_name: str) -> bool:
 PDF_AVAILABLE = check_optional_dependency('reportlab')
 DOCX_AVAILABLE = check_optional_dependency('docx')
 HTML_AVAILABLE = check_optional_dependency('markdown')
+
+# ==========================================
+# Career Data Storage (Local JSON)
+# ==========================================
+
+# Location of career data file (user-configurable via environment variable)
+CAREER_DATA_FILE = os.environ.get(
+    'CAREER_DATA_FILE',
+    str(Path.home() / '.resume_tailor' / 'career_data.json')
+)
+
+# Backup settings
+BACKUP_ENABLED = True  # Create .bak file before each write
+
+# Cache settings
+CACHE_ENABLED = True  # Use in-memory cache with timestamp checking
+CACHE_TTL_SECONDS = 300  # Cache time-to-live (not currently enforced, uses file timestamp)

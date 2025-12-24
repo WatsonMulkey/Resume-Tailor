@@ -3,7 +3,7 @@ Core generation logic for resume and cover letter tailoring.
 
 This module handles:
 - Job description parsing and keyword extraction
-- Supermemory retrieval for relevant experience
+- Local career data retrieval (from career_data.json)
 - Claude API calls with anti-hallucination prompts
 - Document formatting and output
 """
@@ -24,7 +24,7 @@ except ImportError:
 import anthropic
 
 try:
-    from pdf_generator import markdown_to_pdf
+    from pdf_generator import markdown_to_pdf, generate_pdf_from_data, generate_cover_letter_pdf
     PDF_AVAILABLE = True
 except ImportError:
     PDF_AVAILABLE = False
@@ -165,8 +165,8 @@ Only include information actually present in the job description. Don't invent a
         return result
 
 
-class SupermemoryRetriever:
-    """Retrieve relevant career information from supermemory."""
+class LocalCareerDataRetriever:
+    """Retrieve relevant career information from local JSON storage."""
 
     def __init__(self, verbose: bool = False):
         self.verbose = verbose
@@ -174,11 +174,11 @@ class SupermemoryRetriever:
     def _log(self, message: str):
         """Print message if verbose mode is enabled."""
         if self.verbose:
-            print(f"  [Search] {message}")
+            print(f"  [Local Data] {message}")
 
     def retrieve_relevant_context(self, job_info: Dict[str, Any]) -> Dict[str, str]:
         """
-        Query supermemory for relevant experience based on job requirements.
+        Load career data from local storage and format for AI generation.
 
         Returns:
             Dict with categories of relevant information as combined strings
@@ -191,64 +191,121 @@ class SupermemoryRetriever:
             "personal_values": ""
         }
 
-        # Search for relevant achievements and skills
-        all_results = []
+        try:
+            # Import career_data_manager (local import to avoid circular dependency)
+            from career_data_manager import load_career_data
 
-        # Build comprehensive search query
-        search_terms = []
+            self._log("Loading career data from local storage...")
+            career_data = load_career_data()
 
-        # Add skills from job description
-        for skill in job_info.get("required_skills", [])[:5]:  # Top 5 skills
-            search_terms.append(skill)
+            # Format achievements
+            context["achievements"] = self._format_achievements(career_data)
 
-        # Add key responsibilities
-        for resp in job_info.get("responsibilities", [])[:3]:  # Top 3 responsibilities
-            search_terms.append(resp[:50])  # First 50 chars
+            # Format skills
+            context["skills"] = self._format_skills(career_data)
 
-        # Add job title keywords
-        title_keywords = job_info.get("title", "").split()[:3]
-        search_terms.extend(title_keywords)
+            # Format job history
+            context["jobs"] = self._format_jobs(career_data)
 
-        # Perform searches
-        if search_terms:
-            # Search for achievements
-            self._log("Searching for relevant achievements...")
-            query = " ".join(search_terms[:10])  # Limit query length
+            # Format writing style (from personal values if available)
+            context["writing_style"] = self._get_writing_style(career_data)
 
-            try:
-                # Try to use MCP supermemory search if available
-                from mcp__supermemory__search import search as supermemory_search
+            # Format personal values
+            context["personal_values"] = self._format_personal_values(career_data)
 
-                # Search for achievements
-                achievement_results = supermemory_search(informationToGet=f"achievements metrics results for {query}")
-                context["achievements"] = achievement_results if achievement_results else self._get_fallback_achievements()
+            self._log(f"Loaded: {len(career_data.jobs)} jobs, {len(career_data.skills)} skills")
 
-                # Search for skills
-                skill_results = supermemory_search(informationToGet=f"skills experience evidence for {query}")
-                context["skills"] = skill_results if skill_results else self._get_fallback_skills()
-
-                # Search for job history
-                job_results = supermemory_search(informationToGet=f"job history experience for {query}")
-                context["jobs"] = job_results if job_results else self._get_fallback_jobs()
-
-                # Search for writing style
-                writing_results = supermemory_search(informationToGet="cover letter writing style tone")
-                context["writing_style"] = writing_results if writing_results else self._get_fallback_writing_style()
-
-                # Search for personal values (filter for domain-appropriateness)
-                values_results = supermemory_search(informationToGet="personal values mission alignment career motivation")
-                context["personal_values"] = values_results if values_results else self._get_fallback_personal_values()
-
-            except ImportError:
-                # Fall back to hardcoded context if MCP not available
-                self._log("MCP supermemory not available, using fallback data")
-                context = self._get_fallback_context()
-
-        else:
-            # No search terms, use all fallback data
+        except Exception as e:
+            # Fall back to import_career_data.py (hardcoded data)
+            self._log(f"Local storage unavailable ({e}), using fallback data")
             context = self._get_fallback_context()
 
         return context
+
+    def _format_achievements(self, career_data) -> str:
+        """Format achievements for AI prompt."""
+        achievements = []
+
+        # Gather achievements from jobs
+        for job in career_data.jobs:
+            if hasattr(job, 'achievements') and job.achievements:
+                for achievement in job.achievements:
+                    achievements.append(f"{achievement.description} at {achievement.company}")
+
+        # Gather achievements from skills
+        for skill in career_data.skills:
+            if hasattr(skill, 'examples') and skill.examples:
+                for example in skill.examples:
+                    if example.result:
+                        achievements.append(f"{example.result} - {example.description} at {example.company}")
+
+        if achievements:
+            return "\n".join(achievements[:10])  # Top 10 achievements
+        else:
+            return self._get_fallback_achievements()
+
+    def _format_skills(self, career_data) -> str:
+        """Format skills for AI prompt."""
+        skill_lines = []
+
+        for skill in career_data.skills:
+            # Format: Skill Name: Evidence/Examples
+            examples = []
+            if hasattr(skill, 'examples') and skill.examples:
+                for example in skill.examples[:2]:  # Top 2 examples per skill
+                    examples.append(f"{example.description} at {example.company}")
+
+            evidence = "; ".join(examples) if examples else "Professional experience"
+            skill_lines.append(f"{skill.name}: {evidence}")
+
+        if skill_lines:
+            return "\n".join(skill_lines)
+        else:
+            return self._get_fallback_skills()
+
+    def _format_jobs(self, career_data) -> str:
+        """Format job history for AI prompt."""
+        job_lines = []
+
+        for job in career_data.jobs:
+            # Format: Company (Dates): Title - Key responsibilities/achievements
+            dates = f"{job.start_date} to {job.end_date or 'Present'}"
+            context = job.company_context if hasattr(job, 'company_context') and job.company_context else ""
+
+            responsibilities = ""
+            if hasattr(job, 'responsibilities') and job.responsibilities:
+                responsibilities = ", ".join(job.responsibilities[:3])  # Top 3 responsibilities
+
+            job_lines.append(f"{job.company} ({dates}): {job.title} - {context or responsibilities}")
+
+        if job_lines:
+            return "\n".join(job_lines)
+        else:
+            return self._get_fallback_jobs()
+
+    def _get_writing_style(self, career_data) -> str:
+        """Extract writing style from personal values or use default."""
+        # Look for writing style in personal values
+        for value in career_data.personal_values:
+            if 'writing' in value.content.lower() or 'style' in value.content.lower():
+                return value.content
+
+        # Default writing style
+        return self._get_fallback_writing_style()
+
+    def _format_personal_values(self, career_data) -> str:
+        """Format personal values for AI prompt."""
+        values = []
+
+        for value in career_data.personal_values:
+            # Filter out personal stories unless specifically about values/motivation
+            if value.category in ['values', 'motivation']:
+                values.append(value.content)
+
+        if values:
+            return "\n".join(values)
+        else:
+            return self._get_fallback_personal_values()
 
     def _get_fallback_achievements(self) -> str:
         """Fallback achievement data when supermemory unavailable."""
@@ -480,7 +537,7 @@ class ResumeGenerator:
         self.verbose = verbose
         self.log_callback = log_callback
         self.parser = JobDescriptionParser()
-        self.retriever = SupermemoryRetriever(verbose=verbose)
+        self.retriever = LocalCareerDataRetriever(verbose=verbose)  # Use local storage instead of supermemory
         self.api_key = os.environ.get("ANTHROPIC_API_KEY")
         self.client = anthropic.Anthropic(api_key=self.api_key) if self.api_key else None
 
@@ -498,10 +555,20 @@ class ResumeGenerator:
         output_dir: Path = Path("./output"),
         resume_only: bool = False,
         cover_letter_only: bool = False,
-        output_format: str = "markdown"
+        output_format: str = "markdown",
+        discovery_callback: Optional[callable] = None
     ) -> Dict[str, Any]:
         """
         Generate tailored resume and/or cover letter.
+
+        Args:
+            job_description: Raw job description text
+            company_name: Optional company name override
+            output_dir: Output directory for generated files
+            resume_only: Only generate resume
+            cover_letter_only: Only generate cover letter
+            output_format: Output format (markdown, pdf, all)
+            discovery_callback: Optional callback for skill discovery
 
         Returns:
             Dict with 'files' key containing list of generated file paths
@@ -518,7 +585,17 @@ class ResumeGenerator:
         self._log(f"[OK] Found {len(job_info['responsibilities'])} key responsibilities")
         self._log("")
 
-        # Retrieve relevant context from supermemory
+        # Optional: Run discovery callback
+        if discovery_callback:
+            self._log("Checking for missing skills...")
+            try:
+                discovery_callback(job_description, job_info)
+                self._log("[OK] Discovery complete")
+            except Exception as e:
+                self._log(f"[Warning] Discovery skipped: {e}")
+            self._log("")
+
+        # Retrieve relevant context from career data
         self._log("Retrieving relevant experience from your career history...")
         context = self.retriever.retrieve_relevant_context(job_info)
         self._log("[OK] Context retrieved")
@@ -673,15 +750,21 @@ Focus on quality over quantity - be concise and impactful within the 1-page cons
 
         files_to_cleanup = []
 
+        # Parse resume content into structured data (used by both PDF and HTML)
+        resume_data = self._parse_resume_for_html(resume_content, job_info)
+
         # Generate PDF if requested
         if output_format in ['pdf', 'all'] and PDF_AVAILABLE:
             pdf_filename = f"Watson_Mulkey_Resume_{company.replace(' ', '_')}.pdf"
             pdf_path = output_dir / pdf_filename
             try:
-                markdown_to_pdf(md_file_path, pdf_path)
-                self._log(f"[OK] PDF generated: {pdf_path}")
+                self._log(f"[DEBUG] Calling generate_pdf_from_data with {len(resume_data.get('experience', []))} jobs", force=True)
+                generate_pdf_from_data(resume_data, pdf_path)
+                self._log(f"[OK] PDF generated with NEW STYLING: {pdf_path}")
             except Exception as e:
-                self._log(f"Warning: PDF generation failed: {e}")
+                self._log(f"ERROR: PDF generation failed: {e}", force=True)
+                import traceback
+                self._log(f"Traceback: {traceback.format_exc()}", force=True)
 
         # Generate HTML if requested (temporary - not needed for final output)
         html_path = None
@@ -689,8 +772,6 @@ Focus on quality over quantity - be concise and impactful within the 1-page cons
             html_filename = f"Watson_Mulkey_Resume_{company.replace(' ', '_')}.html"
             html_path = output_dir / html_filename
             try:
-                # Parse resume content into structured data for HTML template
-                resume_data = self._parse_resume_for_html(resume_content, job_info)
                 generate_html_resume(resume_data, html_path)
                 self._log(f"[OK] HTML generated: {html_path}")
                 # Mark HTML for cleanup if we're generating all formats
@@ -1147,12 +1228,13 @@ Generate a cover letter that feels genuinely written by Watson and makes hiring 
             except Exception as e:
                 self._log(f"Warning: Cover letter DOCX generation failed: {e}", force=True)
 
-        # Generate PDF if requested
+        # Generate PDF if requested - using cover letter specific PDF generator
         if output_format in ['pdf', 'all'] and PDF_AVAILABLE:
             pdf_filename = f"Watson_Mulkey_{company.replace(' ', '_')}_CoverLetter.pdf"
             pdf_path = output_dir / pdf_filename
             try:
-                markdown_to_pdf(md_file_path, pdf_path)
+                # Use cover letter specific PDF generator with proper formatting
+                generate_cover_letter_pdf(md_file_path, pdf_path)
                 self._log(f"[OK] Cover letter PDF generated: {pdf_path}", force=True)
                 generated_files.append(str(pdf_path))
             except Exception as e:

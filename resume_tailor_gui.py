@@ -62,8 +62,30 @@ class ResumeTailorGUI:
 
         self.setup_ui()
 
+        # Discovery mode enabled by default
+        self.discovery_enabled = True
+
+        # Check if migration needed (after UI is set up)
+        self.root.after(100, self.check_migration_needed)
+
     def setup_ui(self):
         """Build the terminal-style interface."""
+
+        # Menu Bar
+        menubar = tk.Menu(self.root, bg=self.bg_color, fg=self.fg_color)
+        self.root.config(menu=menubar)
+
+        # File Menu
+        file_menu = tk.Menu(menubar, tearoff=0, bg=self.bg_color, fg=self.fg_color)
+        menubar.add_cascade(label="File", menu=file_menu)
+        file_menu.add_command(label="Restore from Backup", command=self.restore_from_backup)
+        file_menu.add_separator()
+        file_menu.add_command(label="Exit", command=self.root.quit)
+
+        # Help Menu
+        help_menu = tk.Menu(menubar, tearoff=0, bg=self.bg_color, fg=self.fg_color)
+        menubar.add_cascade(label="Help", menu=help_menu)
+        help_menu.add_command(label="About", command=self.show_about)
 
         # ASCII Art Header
         header_frame = tk.Frame(self.root, bg=self.bg_color)
@@ -205,6 +227,20 @@ class ResumeTailorGUI:
         )
         cover_check.pack(side=tk.LEFT, padx=10)
 
+        self.discovery_var = tk.BooleanVar(value=True)
+        discovery_check = tk.Checkbutton(
+            output_frame,
+            text="[X] SKILL DISCOVERY",
+            variable=self.discovery_var,
+            font=self.mono_font,
+            fg=self.fg_color,
+            bg=self.bg_color,
+            selectcolor=self.text_bg,
+            activebackground=self.bg_color,
+            activeforeground=self.accent_color
+        )
+        discovery_check.pack(side=tk.LEFT, padx=10)
+
         # Generate Button
         button_frame = tk.Frame(main_frame, bg=self.bg_color)
         button_frame.pack(pady=20)
@@ -241,6 +277,515 @@ class ResumeTailorGUI:
 
         self.log_status(">> System initialized. Ready for input.")
         self.log_status(">> Paste job description and click GENERATE.")
+
+    def check_migration_needed(self):
+        """Check if career data needs migration from supermemory."""
+        from career_data_manager import get_manager
+        from pathlib import Path
+
+        manager = get_manager()
+
+        # Check if career_data.json exists
+        if manager.file_path.exists():
+            # Data already migrated
+            return
+
+        # Check if import_career_data.py exists (indicating supermemory data available)
+        import_file = Path(__file__).parent / 'import_career_data.py'
+        if not import_file.exists():
+            # No data to migrate - show first-time setup
+            self.show_first_time_setup()
+            return
+
+        # Show migration dialog
+        self.show_migration_dialog()
+
+    def show_migration_dialog(self):
+        """Show migration dialog for supermemory -> local storage."""
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Migration Available")
+        dialog.geometry("600x400")
+        dialog.configure(bg=self.bg_color)
+        dialog.transient(self.root)
+        dialog.grab_set()
+
+        # Title
+        title = tk.Label(
+            dialog,
+            text="╔═══════════════════════════════════════════════════════╗\n"
+                 "║          MIGRATION AVAILABLE                      ║\n"
+                 "╚═══════════════════════════════════════════════════════╝",
+            font=self.mono_font_bold,
+            fg=self.accent_color,
+            bg=self.bg_color,
+            justify=tk.LEFT
+        )
+        title.pack(pady=20)
+
+        # Message
+        message = tk.Label(
+            dialog,
+            text="We've detected career data from a previous version.\n\n"
+                 "This version stores data locally for:\n"
+                 "  • Privacy (your data stays on your machine)\n"
+                 "  • Reliability (no external dependencies)\n"
+                 "  • Performance (faster access)\n\n"
+                 "Would you like to migrate now?\n\n"
+                 "Estimated time: <30 seconds",
+            font=self.mono_font,
+            fg=self.fg_color,
+            bg=self.bg_color,
+            justify=tk.LEFT
+        )
+        message.pack(pady=10, padx=20)
+
+        # Button frame
+        button_frame = tk.Frame(dialog, bg=self.bg_color)
+        button_frame.pack(pady=20)
+
+        # Preview button
+        preview_btn = tk.Button(
+            button_frame,
+            text="Preview Migration",
+            font=self.mono_font,
+            fg=self.bg_color,
+            bg=self.fg_color,
+            command=lambda: self.run_migration_preview(dialog)
+        )
+        preview_btn.pack(side=tk.LEFT, padx=5)
+
+        # Migrate button
+        migrate_btn = tk.Button(
+            button_frame,
+            text="Migrate Now",
+            font=self.mono_font_bold,
+            fg=self.bg_color,
+            bg=self.accent_color,
+            command=lambda: self.run_migration(dialog)
+        )
+        migrate_btn.pack(side=tk.LEFT, padx=5)
+
+        # Skip button
+        skip_btn = tk.Button(
+            button_frame,
+            text="Skip",
+            font=self.mono_font,
+            fg=self.fg_color,
+            bg=self.bg_color,
+            command=dialog.destroy
+        )
+        skip_btn.pack(side=tk.LEFT, padx=5)
+
+    def run_migration_preview(self, parent_dialog):
+        """Run migration in preview mode."""
+        import subprocess
+
+        # Close parent dialog
+        parent_dialog.destroy()
+
+        # Show preview window
+        preview_window = tk.Toplevel(self.root)
+        preview_window.title("Migration Preview")
+        preview_window.geometry("700x500")
+        preview_window.configure(bg=self.bg_color)
+
+        # Preview text area
+        preview_text = scrolledtext.ScrolledText(
+            preview_window,
+            font=self.mono_font,
+            bg=self.text_bg,
+            fg=self.fg_color,
+            state=tk.DISABLED
+        )
+        preview_text.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        # Run migration preview
+        try:
+            result = subprocess.run(
+                [sys.executable, 'migrate_from_supermemory.py', '--preview'],
+                capture_output=True,
+                text=True,
+                cwd=Path(__file__).parent
+            )
+
+            preview_text.config(state=tk.NORMAL)
+            preview_text.insert('1.0', result.stdout)
+            preview_text.config(state=tk.DISABLED)
+
+        except Exception as e:
+            preview_text.config(state=tk.NORMAL)
+            preview_text.insert('1.0', f"Preview failed: {e}")
+            preview_text.config(state=tk.DISABLED)
+
+        # Close button
+        close_btn = tk.Button(
+            preview_window,
+            text="Close",
+            command=lambda: [preview_window.destroy(), self.show_migration_dialog()]
+        )
+        close_btn.pack(pady=10)
+
+    def run_migration(self, parent_dialog):
+        """Run actual migration."""
+        import subprocess
+
+        # Close parent dialog
+        parent_dialog.destroy()
+
+        # Show progress window
+        progress_window = tk.Toplevel(self.root)
+        progress_window.title("Migrating...")
+        progress_window.geometry("600x300")
+        progress_window.configure(bg=self.bg_color)
+        progress_window.transient(self.root)
+        progress_window.grab_set()
+
+        # Progress label
+        progress_label = tk.Label(
+            progress_window,
+            text="Migrating career data to local storage...",
+            font=self.mono_font_bold,
+            fg=self.accent_color,
+            bg=self.bg_color
+        )
+        progress_label.pack(pady=20)
+
+        # Progress text
+        progress_text = scrolledtext.ScrolledText(
+            progress_window,
+            height=10,
+            font=self.mono_font,
+            bg=self.text_bg,
+            fg=self.fg_color,
+            state=tk.DISABLED
+        )
+        progress_text.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        def run_migration_thread():
+            try:
+                # Run migration with auto-confirm
+                result = subprocess.run(
+                    [sys.executable, 'migrate_from_supermemory.py'],
+                    input='y\n',
+                    capture_output=True,
+                    text=True,
+                    cwd=Path(__file__).parent
+                )
+
+                # Update UI in main thread
+                self.root.after(0, lambda: progress_text.config(state=tk.NORMAL))
+                self.root.after(0, lambda: progress_text.insert('1.0', result.stdout))
+                self.root.after(0, lambda: progress_text.config(state=tk.DISABLED))
+
+                if result.returncode == 0:
+                    self.root.after(0, lambda: progress_label.config(
+                        text="✓ Migration Complete!",
+                        fg=self.fg_color
+                    ))
+
+                    # Add close button
+                    def close_and_confirm():
+                        progress_window.destroy()
+                        messagebox.showinfo(
+                            "Success",
+                            "Migration completed successfully!\n\n"
+                            "Your career data is now stored locally at:\n"
+                            f"{result.stdout.split('Location: ')[1].split()[0] if 'Location:' in result.stdout else '~/.resume_tailor/career_data.json'}"
+                        )
+
+                    close_btn = tk.Button(
+                        progress_window,
+                        text="Close",
+                        font=self.mono_font_bold,
+                        command=close_and_confirm
+                    )
+                    self.root.after(0, lambda: close_btn.pack(pady=10))
+                else:
+                    self.root.after(0, lambda: progress_label.config(
+                        text="✗ Migration Failed",
+                        fg="#ff0000"
+                    ))
+
+            except Exception as e:
+                self.root.after(0, lambda: progress_text.config(state=tk.NORMAL))
+                self.root.after(0, lambda: progress_text.insert('1.0', f"Error: {e}"))
+                self.root.after(0, lambda: progress_text.config(state=tk.DISABLED))
+                self.root.after(0, lambda: progress_label.config(text="✗ Error", fg="#ff0000"))
+
+        # Run in background thread
+        thread = threading.Thread(target=run_migration_thread, daemon=True)
+        thread.start()
+
+    def show_first_time_setup(self):
+        """Show first-time setup dialog for file location."""
+        from career_data_manager import get_manager
+
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Welcome to Resume Tailor")
+        dialog.geometry("550x350")
+        dialog.configure(bg=self.bg_color)
+        dialog.transient(self.root)
+        dialog.grab_set()
+
+        # Title
+        title = tk.Label(
+            dialog,
+            text="╔═══════════════════════════════════════════════════════╗\n"
+                 "║          WELCOME TO RESUME TAILOR                 ║\n"
+                 "╚═══════════════════════════════════════════════════════╝",
+            font=self.mono_font_bold,
+            fg=self.accent_color,
+            bg=self.bg_color,
+            justify=tk.LEFT
+        )
+        title.pack(pady=20)
+
+        # Message
+        default_location = str(get_manager().file_path)
+        message = tk.Label(
+            dialog,
+            text="Where would you like to store your career data?\n\n"
+                 "This file will contain your:\n"
+                 "  • Job history\n"
+                 "  • Skills and achievements\n"
+                 "  • Personal information\n\n"
+                 f"Default location:\n{default_location}\n\n"
+                 "Your data never leaves your machine.\n"
+                 "You control where it lives.",
+            font=self.mono_font,
+            fg=self.fg_color,
+            bg=self.bg_color,
+            justify=tk.LEFT
+        )
+        message.pack(pady=10, padx=20)
+
+        # Button frame
+        button_frame = tk.Frame(dialog, bg=self.bg_color)
+        button_frame.pack(pady=20)
+
+        # Default location button
+        default_btn = tk.Button(
+            button_frame,
+            text="Use Default Location",
+            font=self.mono_font_bold,
+            fg=self.bg_color,
+            bg=self.accent_color,
+            command=lambda: self.create_empty_career_data(dialog, default_location)
+        )
+        default_btn.pack(side=tk.LEFT, padx=5)
+
+        # Custom location button (future feature)
+        # custom_btn = tk.Button(
+        #     button_frame,
+        #     text="Choose Custom Location",
+        #     font=self.mono_font,
+        #     command=lambda: self.choose_custom_location(dialog)
+        # )
+        # custom_btn.pack(side=tk.LEFT, padx=5)
+
+    def create_empty_career_data(self, dialog, location):
+        """Create empty career data file."""
+        from career_data_manager import load_career_data
+
+        try:
+            # This will create the empty file with default structure
+            load_career_data()
+
+            dialog.destroy()
+
+            messagebox.showinfo(
+                "Setup Complete",
+                f"Career data file created at:\n{location}\n\n"
+                "You're ready to generate resumes!\n\n"
+                "Tip: Add your career data gradually as you apply to jobs."
+            )
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to create career data file:\n{e}")
+
+    def _create_discovery_callback(self):
+        """Create discovery callback for skill detection."""
+        def discovery_callback(job_description: str, job_info: dict):
+            """Callback to detect and add missing skills."""
+            from career_discovery import detect_missing_skills
+            from discovery_dialogs import MultiStepDiscoveryDialog
+            from career_data_manager import load_career_data, save_career_data
+            from models import Skill, Achievement
+
+            # Detect missing skills
+            missing_skills = detect_missing_skills(job_description, max_skills=5)
+
+            if not missing_skills:
+                return  # No missing skills
+
+            # Show discovery prompt on main thread
+            def show_discovery_prompt():
+                from tkinter import messagebox
+
+                # Ask if user wants to add skills
+                result = messagebox.askyesno(
+                    "Skills Discovered",
+                    f"The job description mentions {len(missing_skills)} skill(s) "
+                    f"not in your career data:\n\n" +
+                    "\n".join(f"  • {skill}" for skill in missing_skills[:5]) +
+                    f"\n\nWould you like to add any of these?"
+                )
+
+                if not result:
+                    return
+
+                # Show discovery dialog for each skill
+                self._show_discovery_for_skills(missing_skills, job_description)
+
+            # Run on main thread
+            self.root.after(0, show_discovery_prompt)
+
+        return discovery_callback
+
+    def _show_discovery_for_skills(self, skills: list, job_description: str):
+        """Show discovery dialogs for multiple skills."""
+        from discovery_dialogs import MultiStepDiscoveryDialog
+        from career_data_manager import load_career_data, save_career_data
+        from models import Skill, Achievement
+
+        if not skills:
+            return
+
+        # Get first skill
+        skill_name = skills[0]
+        remaining_skills = skills[1:]
+
+        def on_skill_saved(discovered_skill):
+            """Callback when user saves a discovered skill."""
+            try:
+                # Load current career data
+                career_data = load_career_data()
+
+                # Check if skill already exists
+                existing_skill = None
+                for skill in career_data.skills:
+                    if skill.name.lower() == discovered_skill.name.lower():
+                        existing_skill = skill
+                        break
+
+                # Create achievement from discovered skill
+                achievement = Achievement(
+                    description=discovered_skill.example,
+                    company=discovered_skill.company,
+                    timeframe=discovered_skill.timeframe,
+                    result=discovered_skill.result
+                )
+
+                if existing_skill:
+                    # Add as another example to existing skill
+                    existing_skill.examples.append(achievement)
+                    self.log_status(f">> Added example to existing skill: {discovered_skill.name}")
+                else:
+                    # Create new skill
+                    new_skill = Skill(
+                        name=discovered_skill.name,
+                        category=discovered_skill.category or "technical",
+                        proficiency="advanced",
+                        examples=[achievement],
+                        last_used=discovered_skill.timeframe.split(' to ')[0]
+                    )
+                    career_data.skills.append(new_skill)
+                    self.log_status(f">> Added new skill: {discovered_skill.name}")
+
+                # Save career data
+                save_career_data(career_data)
+                self.log_status(f">> Saved to career data")
+
+                # Continue with remaining skills
+                if remaining_skills:
+                    from tkinter import messagebox
+                    result = messagebox.askyesno(
+                        "More Skills",
+                        f"{len(remaining_skills)} more skill(s) detected.\n\nContinue adding?"
+                    )
+                    if result:
+                        self._show_discovery_for_skills(remaining_skills, job_description)
+
+            except Exception as e:
+                from tkinter import messagebox
+                messagebox.showerror(
+                    "Save Failed",
+                    f"Failed to save skill:\n\n{str(e)}"
+                )
+
+        # Show dialog for this skill
+        MultiStepDiscoveryDialog(
+            self.root,
+            skill_name,
+            job_description,
+            on_complete=on_skill_saved
+        )
+
+    def restore_from_backup(self):
+        """Restore career data from backup file."""
+        from career_data_manager import get_manager
+
+        manager = get_manager()
+        backup_path = manager.get_backup_path()
+
+        # Check if backup exists
+        if not backup_path.exists():
+            messagebox.showwarning(
+                "No Backup Found",
+                "No backup file found.\n\n"
+                f"Expected location:\n{backup_path}\n\n"
+                "Backups are created automatically before each save."
+            )
+            return
+
+        # Confirm restoration
+        result = messagebox.askyesno(
+            "Restore from Backup",
+            f"This will restore your career data from the backup file.\n\n"
+            f"Backup file:\n{backup_path}\n\n"
+            f"Current file will be overwritten.\n\n"
+            f"Continue?"
+        )
+
+        if not result:
+            return
+
+        # Perform restoration
+        try:
+            if manager._restore_from_backup():
+                messagebox.showinfo(
+                    "Success",
+                    "Career data restored from backup successfully!\n\n"
+                    f"Restored from:\n{backup_path}"
+                )
+                self.log_status(">> Career data restored from backup")
+            else:
+                messagebox.showerror(
+                    "Restore Failed",
+                    "Failed to restore from backup.\n\n"
+                    "The backup file may be corrupted or inaccessible."
+                )
+        except Exception as e:
+            messagebox.showerror(
+                "Error",
+                f"Failed to restore from backup:\n\n{str(e)}"
+            )
+
+    def show_about(self):
+        """Show about dialog."""
+        about_text = (
+            "Resume Tailor v2.0\n\n"
+            "AI-Powered Resume Generation\n\n"
+            "Features:\n"
+            "• Local career data storage\n"
+            "• Privacy-first architecture\n"
+            "• Claude AI integration\n"
+            "• Automatic backup & recovery\n\n"
+            "Your data stays on your machine.\n"
+            "No external dependencies required."
+        )
+
+        messagebox.showinfo("About Resume Tailor", about_text)
 
     def create_section_header(self, parent, text):
         """Create ASCII art section header."""
@@ -320,12 +865,17 @@ class ResumeTailorGUI:
             self.log_status(f">> DOCX Available: {gen_module.DOCX_AVAILABLE}")
             self.log_status("")
 
-            # Determine output directory
-            base_dir = Path.home() / "OneDrive" / "Desktop" / "Jobs" / company_name.replace(" ", "_")
+            # Determine output directory (use local Documents to avoid OneDrive sync issues)
+            base_dir = Path.home() / "Documents" / "Jobs" / company_name.replace(" ", "_")
             base_dir.mkdir(parents=True, exist_ok=True)
 
             self.log_status(f">> Output directory: {base_dir}")
             self.log_status("")
+
+            # Create discovery callback if enabled
+            discovery_callback = None
+            if self.discovery_var.get():
+                discovery_callback = self._create_discovery_callback()
 
             # Generate documents
             results = generator.generate(
@@ -334,7 +884,8 @@ class ResumeTailorGUI:
                 output_dir=base_dir,
                 resume_only=not self.cover_letter_var.get(),
                 cover_letter_only=not self.resume_var.get(),
-                output_format="all"
+                output_format="all",
+                discovery_callback=discovery_callback
             )
 
             # Validate output files for placeholder text before declaring success
