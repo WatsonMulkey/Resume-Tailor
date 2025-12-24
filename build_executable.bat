@@ -32,8 +32,6 @@ python -m PyInstaller --onefile ^
     --add-data ".env;." ^
     --hidden-import anthropic ^
     --hidden-import dotenv ^
-    --hidden-import markdown ^
-    --hidden-import weasyprint ^
     --hidden-import docx ^
     --hidden-import reportlab ^
     resume_tailor_gui.py
