@@ -16,6 +16,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from generator import ResumeGenerator
+from config import APP_VERSION
 
 
 ASCII_LOGO = r"""
@@ -45,7 +46,7 @@ class ResumeTailorGUI:
 
     def __init__(self, root):
         self.root = root
-        self.root.title("Resume Tailor v2.0")
+        self.root.title(f"Resume Tailor v{APP_VERSION}")
         self.root.geometry("1000x850")
         self.root.configure(bg="#1a1a1a")
 
@@ -943,7 +944,7 @@ class ResumeTailorGUI:
     def show_about(self):
         """Show about dialog."""
         about_text = (
-            "Resume Tailor v2.0\n\n"
+            f"Resume Tailor v{APP_VERSION}\n\n"
             "AI-Powered Resume Generation\n\n"
             "Features:\n"
             "• Local career data storage\n"
