@@ -9,10 +9,17 @@ from datetime import datetime
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field, field_validator, model_validator, ConfigDict
 import re
+import uuid
+
+
+def _generate_short_id() -> str:
+    """Generate a short unique ID for provenance tracking."""
+    return str(uuid.uuid4())[:8]
 
 
 class Achievement(BaseModel):
     """Represents a quantifiable achievement with context."""
+    id: str = Field(default_factory=_generate_short_id)  # Unique ID for provenance tracking
     description: str = Field(min_length=20, max_length=500)
     company: str = Field(min_length=1)
     timeframe: str = Field(pattern=r"^\d{4}-\d{2}$|^\d{4}-\d{2} to \d{4}-\d{2}$|^\d{4}-\d{2} to Present$")
@@ -57,6 +64,7 @@ class Skill(BaseModel):
 
 class Job(BaseModel):
     """Represents a job/position in work history."""
+    id: str = Field(default_factory=_generate_short_id)  # Unique ID for provenance tracking
     company: str
     title: str
     start_date: str = Field(pattern=r"^\d{4}-\d{2}$|^\d{2}/\d{4}$")  # YYYY-MM or MM/YYYY
@@ -175,6 +183,7 @@ class DiscoveredSkill(BaseModel):
     Model for skills discovered during generation (used by discovery mode).
     Stricter validation than regular Skill model.
     """
+    id: str = Field(default_factory=_generate_short_id)  # Unique ID for provenance tracking
     name: str = Field(min_length=2, max_length=100, pattern=r"^[A-Za-z0-9\s\.\-\+#&/]+$")
     company: str = Field(min_length=1)
     timeframe: str = Field(pattern=r"^\d{4}-\d{2}( to \d{4}-\d{2})?$|^\d{4}-\d{2} to Present$")

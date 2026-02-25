@@ -98,7 +98,7 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
         name='Resume2Name',  # Unique name to avoid conflicts
         parent=styles['Heading1'],
         fontSize=34,
-        textColor=HexColor('#1a1a1a'),
+        textColor=HexColor('#2b2e33'),
         spaceAfter=4,
         spaceBefore=0,
         fontName='Helvetica-Bold',
@@ -106,24 +106,24 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
         alignment=TA_LEFT
     ))
 
-    # Title style (13pt, blue, bold)
+    # Title style (13pt, slate blue, bold)
     styles.add(ParagraphStyle(
         name='Resume2Title',
         parent=styles['Normal'],
         fontSize=13,
-        textColor=HexColor('#2563EB'),
+        textColor=HexColor('#4a5f7a'),
         spaceAfter=6,
         fontName='Helvetica-Bold',
         leading=16,  # line-height: 1.2
         alignment=TA_LEFT
     ))
 
-    # Contact info (9.5pt, gray)
+    # Contact info (9.5pt, cool grey)
     styles.add(ParagraphStyle(
         name='Resume2Contact',
         parent=styles['Normal'],
         fontSize=9.5,
-        textColor=HexColor('#666666'),
+        textColor=HexColor('#7a7d82'),
         spaceAfter=10,
         leading=12,  # line-height: 1.3
         alignment=TA_LEFT
@@ -134,7 +134,7 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
         name='Resume2Section',
         parent=styles['Normal'],
         fontSize=11,
-        textColor=HexColor('#1a1a1a'),
+        textColor=HexColor('#2b2e33'),
         spaceAfter=3,
         spaceBefore=12,
         fontName='Helvetica-Bold',
@@ -147,31 +147,31 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
         name='Resume2JobTitle',
         parent=styles['Normal'],
         fontSize=10.5,
-        textColor=HexColor('#1a1a1a'),
+        textColor=HexColor('#2b2e33'),
         spaceAfter=2,
         fontName='Helvetica-Bold',
         leading=14,  # line-height: 1.3
         alignment=TA_LEFT
     ))
 
-    # Company name (10pt, blue, bold)
+    # Company name (10pt, slate blue, bold)
     styles.add(ParagraphStyle(
         name='Resume2Company',
         parent=styles['Normal'],
         fontSize=10,
-        textColor=HexColor('#2563EB'),
+        textColor=HexColor('#4a5f7a'),
         spaceAfter=2,
         fontName='Helvetica-Bold',
         leading=12,
         alignment=TA_LEFT
     ))
 
-    # Job meta (9pt, italic, gray)
+    # Job meta (9pt, italic, cool grey)
     styles.add(ParagraphStyle(
         name='Resume2Meta',
         parent=styles['Normal'],
         fontSize=9,
-        textColor=HexColor('#777777'),
+        textColor=HexColor('#7a7d82'),
         spaceAfter=6,
         fontName='Helvetica-Oblique',
         leading=11,
@@ -183,7 +183,7 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
         name='Resume2Bullet',
         parent=styles['Normal'],
         fontSize=9.5,
-        textColor=HexColor('#333333'),
+        textColor=HexColor('#2b2e33'),
         spaceAfter=3,  # Tightened from 5px per UX optimization
         leftIndent=0,
         leading=14,  # line-height: 1.4
@@ -195,7 +195,7 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
         name='Resume2AchTitle',
         parent=styles['Normal'],
         fontSize=10,
-        textColor=HexColor('#1a1a1a'),
+        textColor=HexColor('#2b2e33'),
         spaceAfter=4,
         fontName='Helvetica-Bold',
         leading=12,
@@ -207,7 +207,7 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
         name='Resume2AchDesc',
         parent=styles['Normal'],
         fontSize=9.5,
-        textColor=HexColor('#555555'),
+        textColor=HexColor('#6b7280'),
         spaceAfter=12,
         leading=14,  # line-height: 1.5
         alignment=TA_LEFT
@@ -218,18 +218,18 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
         name='Resume2Skill',
         parent=styles['Normal'],
         fontSize=9.5,
-        textColor=HexColor('#333333'),
+        textColor=HexColor('#2b2e33'),
         spaceAfter=4,
         leading=13,
         alignment=TA_LEFT
     ))
 
-    # Cert title (10pt, blue, bold)
+    # Cert title (10pt, slate blue, bold)
     styles.add(ParagraphStyle(
         name='Resume2CertTitle',
         parent=styles['Normal'],
         fontSize=10,
-        textColor=HexColor('#2563EB'),
+        textColor=HexColor('#4a5f7a'),
         spaceAfter=2,
         fontName='Helvetica-Bold',
         leading=12,
@@ -241,7 +241,7 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
         name='Resume2CertDesc',
         parent=styles['Normal'],
         fontSize=9,
-        textColor=HexColor('#555555'),
+        textColor=HexColor('#6b7280'),
         spaceAfter=10,
         leading=11,  # line-height: 1.3
         alignment=TA_LEFT
@@ -255,10 +255,10 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
     story.append(Paragraph(resume_data.get('title', 'Senior Product Manager'), styles['Resume2Title']))
     story.append(Paragraph(resume_data.get('contact_info', ''), styles['Resume2Contact']))
 
-    # Horizontal line separator (3px solid blue border)
+    # Horizontal line separator (3px solid mustard accent)
     line_table = Table([['']], colWidths=[7*inch])
     line_table.setStyle(TableStyle([
-        ('LINEBELOW', (0, 0), (-1, -1), 3, HexColor('#2563EB')),
+        ('LINEBELOW', (0, 0), (-1, -1), 3, HexColor('#d4a017')),
     ]))
     story.append(line_table)
     story.append(Spacer(1, 8))
@@ -267,13 +267,13 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
     story.append(Paragraph('EXPERIENCE', styles['Resume2Section']))
     divider = Table([['']], colWidths=[7*inch])
     divider.setStyle(TableStyle([
-        ('LINEBELOW', (0, 0), (-1, -1), 1.5, HexColor('#e0e0e0')),
+        ('LINEBELOW', (0, 0), (-1, -1), 1.5, HexColor('#b8c4d1')),
     ]))
     story.append(divider)
     story.append(Spacer(1, 8))
 
     # Company colors matching HTML
-    colors = ['#6366F1', '#EC4899', '#10B981', '#F59E0B', '#8B5CF6']
+    colors = ['#4a5f7a', '#d4a017', '#5b7d99', '#c96a5a', '#6b8ea8']
 
     for i, job in enumerate(resume_data.get('experience', [])):
         color = colors[i % len(colors)]
@@ -293,7 +293,7 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
             story.append(Paragraph(' • '.join(meta_parts), styles['Resume2Meta']))
 
         for bullet in job.get('bullets', []):
-            bullet_text = f'<font color="#2563EB">▪</font> {bullet}'
+            bullet_text = f'<font color="#4a5f7a">▪</font> {bullet}'
             story.append(Paragraph(bullet_text, styles['Resume2Bullet']))
 
         story.append(Spacer(1, 10))
@@ -303,7 +303,7 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
     story.append(Paragraph('HEADLINE ACHIEVEMENTS', styles['Resume2Section']))
     divider2 = Table([['']], colWidths=[7*inch])
     divider2.setStyle(TableStyle([
-        ('LINEBELOW', (0, 0), (-1, -1), 1.5, HexColor('#e0e0e0')),
+        ('LINEBELOW', (0, 0), (-1, -1), 1.5, HexColor('#b8c4d1')),
     ]))
     story.append(divider2)
     story.append(Spacer(1, 8))
@@ -311,7 +311,7 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
     symbols = ['★', '▶', '●']
     for i, ach in enumerate(resume_data.get('achievements', [])):
         symbol = symbols[i % len(symbols)]
-        icon_text = f'<font color="#2563EB">{symbol}</font> '
+        icon_text = f'<font color="#d4a017">{symbol}</font> '
 
         if ach.get('title'):
             story.append(Paragraph(icon_text + ach['title'], styles['Resume2AchTitle']))
@@ -323,13 +323,14 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
     story.append(Paragraph('SKILLS', styles['Resume2Section']))
     divider3 = Table([['']], colWidths=[7*inch])
     divider3.setStyle(TableStyle([
-        ('LINEBELOW', (0, 0), (-1, -1), 1.5, HexColor('#e0e0e0')),
+        ('LINEBELOW', (0, 0), (-1, -1), 1.5, HexColor('#b8c4d1')),
     ]))
     story.append(divider3)
     story.append(Spacer(1, 8))
 
     for skill in resume_data.get('skills', []):
-        skill_text = f'<font color="#2563EB">│</font> {skill}'
+        rendered = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', skill)
+        skill_text = f'<font color="#4a5f7a">│</font> {rendered}'
         story.append(Paragraph(skill_text, styles['Resume2Skill']))
 
     # Education section
@@ -337,7 +338,7 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
     story.append(Paragraph('EDUCATION', styles['Resume2Section']))
     divider4 = Table([['']], colWidths=[7*inch])
     divider4.setStyle(TableStyle([
-        ('LINEBELOW', (0, 0), (-1, -1), 1.5, HexColor('#e0e0e0')),
+        ('LINEBELOW', (0, 0), (-1, -1), 1.5, HexColor('#b8c4d1')),
     ]))
     story.append(divider4)
     story.append(Spacer(1, 8))
@@ -356,7 +357,7 @@ def generate_pdf_from_data(resume_data: dict, output_pdf: Path):
     story.append(Paragraph('CERTIFICATIONS', styles['Resume2Section']))
     divider5 = Table([['']], colWidths=[7*inch])
     divider5.setStyle(TableStyle([
-        ('LINEBELOW', (0, 0), (-1, -1), 1.5, HexColor('#e0e0e0')),
+        ('LINEBELOW', (0, 0), (-1, -1), 1.5, HexColor('#b8c4d1')),
     ]))
     story.append(divider5)
     story.append(Spacer(1, 8))

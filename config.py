@@ -37,12 +37,24 @@ def get_contact_info() -> dict:
 # API Settings
 # ==========================================
 
-# Claude model to use for generation
-CLAUDE_MODEL = "claude-sonnet-4-20250514"
+# Claude model options
+CLAUDE_MODEL_SONNET = "claude-sonnet-4-5-20250929"
+CLAUDE_MODEL_HAIKU = "claude-haiku-4-5-20251001"
+
+# Active model (can be changed at runtime by GUI)
+CLAUDE_MODEL = CLAUDE_MODEL_SONNET
 
 # Token limits for generation
 MAX_RESUME_TOKENS = 2500
 MAX_COVER_LETTER_TOKENS = 1500
+
+# Interview prep token limits
+MAX_INTERVIEW_STAR_TOKENS = 1200   # Per STAR answer
+MAX_INTERVIEW_SECTION_TOKENS = 1500  # Per section (technical, company, etc.)
+MAX_FLASHCARD_TOKENS = 3000        # Condensation pass
+
+# Interview prep settings
+INTERVIEW_BEHAVIORAL_QUESTION_COUNT = 8
 
 # Retry settings
 MAX_API_RETRIES = 3
@@ -66,6 +78,14 @@ OUTPUT_CONFIG = {
     },
     "cover_letter": {
         "formats": ["docx", "pdf"],  # DOCX and PDF for cover letters
+        "cleanup_intermediate": True,  # Remove .md files
+    },
+    "interview_prep": {
+        "formats": ["pdf"],  # PDF for interview prep study doc
+        "cleanup_intermediate": True,  # Remove .md files
+    },
+    "flashcard": {
+        "formats": ["pdf"],  # PDF for flashcards/cheat sheet
         "cleanup_intermediate": True,  # Remove .md files
     },
 }

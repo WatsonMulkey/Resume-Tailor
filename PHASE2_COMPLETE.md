@@ -286,7 +286,7 @@ For each missing skill:
 ┌─────────────────────────────────────────┐
 │ Step 2: Company/Project                 │
 │ "Which company?"                        │
-│ [Dropdown: Foil Industries, ...]       │
+│ [Dropdown: Foil Engineering, ...]       │
 └─────────────────────────────────────────┘
       ↓
 ┌─────────────────────────────────────────┐
@@ -313,7 +313,7 @@ For each missing skill:
 │ Review Dialog                           │
 │ ┌─────────────────────────────────────┐ │
 │ │ AWS                                 │ │
-│ │ Foil Industries (2023-06 to 2024-01)│ │
+│ │ Foil Engineering (2023-06 to 2024-01)│ │
 │ │                                     │ │
 │ │ Migrated infrastructure to AWS EC2  │ │
 │ │ and S3, implementing auto-scaling   │ │
@@ -475,7 +475,7 @@ Summary:
 
 User Input:
   Skill: Kubernetes
-  Company: Foil Industries
+  Company: Foil Engineering
   Timeframe: 2023-09 to 2024-03
   Example: Orchestrated migration from Docker Swarm to Kubernetes,
            managing deployment pipelines for 8 microservices with
@@ -490,7 +490,7 @@ User Input:
   Warnings: 0
 
   [OK] All checks passed!
-  - Timeframe within job history at Foil Industries
+  - Timeframe within job history at Foil Engineering
   - Company verified
   - No duplicate detected
   - No future dates

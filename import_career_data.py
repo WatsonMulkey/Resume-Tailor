@@ -42,6 +42,21 @@ CAREER_DATA = {
 
     "job_history": [
         {
+            "title": "Founder & Technical Product Manager",
+            "company": "FOIL Engineering",
+            "dates": "04/2025 - Present",
+            "location": "Denver, Colorado",
+            "company_context": "Technical consulting practice building full-stack web applications, AI-powered tools, and PWAs for clients and internal products (foil.engineering)",
+            "responsibilities": [
+                "Built and shipped The Number, a full-stack personal budgeting PWA (Vue 3, Vuetify, FastAPI, SQLite) with pool/carry-over, expense frequency normalization, beta invite gating, and encrypted settings",
+                "Designed and deployed foil.engineering consulting website (Astro SSG) with blog, collapsible accordion service cards, and SEO optimization",
+                "Developed AI-powered resume generation tool with per-job isolation to prevent LLM achievement misattribution, provenance tracing, and Pydantic-validated career data management",
+                "Created client proposals and website redesigns for neighborhood organizations including Curtis Park Neighbors",
+                "Built encrypted RAG database with vector persistence, MCP server integration, and dual-layer security architecture",
+                "Managed full deployment pipeline across Vercel (frontend), Fly.io (backend), and GitHub with CI/CD workflows"
+            ]
+        },
+        {
             "title": "Senior Product Manager - ID/Onboarding/Platform",
             "company": "Registria",
             "dates": "01/2024 - 03/2025",
@@ -129,6 +144,30 @@ CAREER_DATA = {
     ],
 
     "achievements": [
+        {
+            "achievement": "Built and launched full-stack PWA from concept to production as sole developer",
+            "company": "FOIL Engineering",
+            "context": "Designed, built, and deployed The Number — a personal budgeting PWA with Vue 3, Vuetify, FastAPI, and SQLite. Features include pool/carry-over savings, weekly/monthly expense normalization, beta invite gating, encrypted user settings, and PWA badge notifications.",
+            "metrics": "Full-stack application shipped to production with zero downtime",
+            "scope": "Complete product lifecycle: architecture, development, deployment (Vercel + Fly.io), and ongoing iteration",
+            "methods": "Vue 3, FastAPI, SQLite with WAL mode, Pydantic validation, Zod schemas, PWA with service workers"
+        },
+        {
+            "achievement": "Developed AI tool that eliminates achievement misattribution in resume generation",
+            "company": "FOIL Engineering",
+            "context": "Built resume-tailor with per-job isolation architecture that prevents LLMs from cross-contaminating achievements between jobs. Implemented provenance tracing to validate every claim maps to the correct employer.",
+            "metrics": "Zero misattribution errors in generated resumes after architectural fix",
+            "scope": "AI-assisted document generation with Claude API integration",
+            "methods": "Per-job context isolation, provenance tracing, Pydantic career data validation, two-phase generation pipeline"
+        },
+        {
+            "achievement": "Shipped consulting website with SEO optimization and client acquisition pipeline",
+            "company": "FOIL Engineering",
+            "context": "Built foil.engineering using Astro SSG with collapsible accordion service cards, blog with technical articles, projects portfolio, and client proposal generation system.",
+            "metrics": "Site live and generating client leads",
+            "scope": "Full marketing site with blog, service pages, and proposal workflow",
+            "methods": "Astro SSG, responsive CSS design system, SEO meta tags, Vercel deployment"
+        },
         {
             "achievement": "Improved user engagement on flagship product by 32% YoY",
             "company": "Discovery Education",
@@ -286,10 +325,24 @@ CAREER_DATA = {
                 "Designed anti-hallucination patterns for factual accuracy in AI-generated content",
                 "Integrated MCP (Model Context Protocol) servers for semantic data retrieval",
                 "Experienced with prompt engineering and AI optimization for business use cases",
-                "Developed full-stack applications using AI-assisted development workflows"
+                "Developed full-stack applications using AI-assisted development workflows",
+                "Built resume-tailor with per-job isolation preventing LLM cross-contamination at FOIL Engineering",
+                "Created encrypted RAG database (rag-vault) with vector persistence and MCP integration"
             ],
-            "tools": ["Claude API", "Python", "Vue 3", "FastAPI", "MCP"],
+            "tools": ["Claude API", "Python", "Vue 3", "FastAPI", "MCP", "Pydantic", "Zod"],
             "context": "AI-assisted product development and AI integration"
+        },
+        {
+            "skill": "Full-Stack Web Development",
+            "evidence": [
+                "Built The Number PWA end-to-end: Vue 3 + Vuetify frontend, FastAPI + SQLite backend, deployed on Vercel and Fly.io",
+                "Implemented pool/carry-over savings, expense frequency normalization, beta invite gating, and encrypted settings",
+                "Built foil.engineering consulting site with Astro SSG, responsive design system, and blog",
+                "Created rag-vault encrypted database with Python backend and web interface",
+                "Managed deployment pipelines across Vercel, Fly.io, and GitHub"
+            ],
+            "tools": ["Vue 3", "Vuetify", "FastAPI", "SQLite", "Astro", "TypeScript", "Python", "Vercel", "Fly.io"],
+            "context": "Full product lifecycle from architecture through deployment at FOIL Engineering"
         }
     ],
 

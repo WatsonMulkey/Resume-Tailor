@@ -34,6 +34,12 @@ Examples:
 
   # Generate only resume
   resume-tailor --job job_description.txt --resume-only
+
+  # Generate interview prep (study doc + flashcards)
+  resume-tailor --job job_description.txt --interview-prep
+
+  # Generate resume + interview prep (no cover letter)
+  resume-tailor --job job_description.txt --resume-only --interview-prep
         """
     )
 
@@ -80,11 +86,43 @@ Examples:
     )
 
     parser.add_argument(
+        '--interview-prep',
+        action='store_true',
+        help='Generate interview prep study document and flashcards (can combine with --resume-only or use standalone)'
+    )
+
+    parser.add_argument(
         '--format',
         type=str,
         choices=['markdown', 'pdf', 'html', 'docx', 'all'],
         default='markdown',
         help='Output format: markdown (default), pdf (ReportLab), html (styled, print to PDF), docx (ATS-friendly Word), all (all formats)'
+    )
+
+    parser.add_argument(
+        '--thought-pattern',
+        action='store_true',
+        help='Generate a thought pattern analysis document explaining why each choice was made'
+    )
+
+    parser.add_argument(
+        '--trace',
+        action='store_true',
+        default=True,
+        help='Generate provenance trace document showing source attribution for each claim (default: enabled)'
+    )
+    parser.add_argument(
+        '--no-trace',
+        action='store_false',
+        dest='trace',
+        help='Disable provenance trace generation'
+    )
+
+    parser.add_argument(
+        '--personal-connection',
+        type=str,
+        default='',
+        help='Personal connection to the company (e.g. "longtime user", "friend works there")'
     )
 
     parser.add_argument(
@@ -99,8 +137,16 @@ Examples:
 def get_job_description(args):
     """Get job description from various sources."""
     if args.job:
-        # Read from file
-        job_file = Path(args.job)
+        # Read from file with path validation
+        job_file = Path(args.job).resolve()
+
+        # Prevent directory traversal - must be under current dir or home dir
+        cwd = Path.cwd().resolve()
+        home = Path.home().resolve()
+        if not (job_file.is_relative_to(cwd) or job_file.is_relative_to(home)):
+            print(f"Error: Job file path must be under the current directory or home directory")
+            sys.exit(1)
+
         if not job_file.exists():
             print(f"Error: File '{args.job}' not found")
             sys.exit(1)
@@ -208,7 +254,8 @@ def main():
     else:
         # Default: Use local Documents folder to avoid OneDrive sync issues
         base_jobs_dir = Path.home() / "Documents" / "Jobs"
-        safe_company_name = company_name.replace(' ', '_').replace('/', '_').replace('\\', '_')
+        import re
+        safe_company_name = re.sub(r'[^a-zA-Z0-9_-]', '', company_name.replace(' ', '_'))
         output_dir = base_jobs_dir / safe_company_name
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -225,7 +272,11 @@ def main():
         output_dir=output_dir,
         resume_only=args.resume_only,
         cover_letter_only=args.cover_letter_only,
-        output_format=args.format
+        output_format=args.format,
+        thought_pattern=args.thought_pattern,
+        trace_enabled=args.trace,
+        interview_prep=args.interview_prep,
+        personal_connection=args.personal_connection
     )
 
     # Print results
@@ -241,7 +292,12 @@ def main():
     print("  1. Review the generated documents")
     print("  2. Customize any sections that need personal touches")
     print("  3. Verify all facts against your actual experience")
-    print("  4. Submit your application!")
+    if args.interview_prep:
+        print("  4. Study the interview prep document")
+        print("  5. Quiz yourself with the flashcards")
+        print("  6. Submit your application!")
+    else:
+        print("  4. Submit your application!")
 
 
 if __name__ == '__main__':

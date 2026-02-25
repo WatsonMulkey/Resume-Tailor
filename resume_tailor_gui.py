@@ -144,6 +144,46 @@ class ResumeTailorGUI:
         )
         self.company_entry.pack(side=tk.LEFT, padx=10)
 
+        # Personal Connection (optional)
+        connection_frame = tk.Frame(main_frame, bg=self.bg_color)
+        connection_frame.pack(fill=tk.X, pady=5)
+
+        tk.Label(
+            connection_frame,
+            text=">> PERSONAL CONNECTION (optional):",
+            font=self.mono_font_bold,
+            fg=self.accent_color,
+            bg=self.bg_color
+        ).pack(side=tk.LEFT)
+
+        self.connection_entry = tk.Entry(
+            connection_frame,
+            font=self.mono_font,
+            bg=self.text_bg,
+            fg=self.fg_color,
+            insertbackground=self.fg_color,
+            relief=tk.FLAT,
+            borderwidth=2,
+            width=50
+        )
+        self.connection_entry.pack(side=tk.LEFT, padx=10, fill=tk.X, expand=True)
+        self.connection_entry.insert(0, "e.g. longtime user, friend works there, love the product")
+
+        # Clear placeholder on focus
+        def clear_placeholder(event):
+            if self.connection_entry.get().startswith("e.g."):
+                self.connection_entry.delete(0, tk.END)
+                self.connection_entry.config(fg=self.fg_color)
+
+        def restore_placeholder(event):
+            if not self.connection_entry.get().strip():
+                self.connection_entry.insert(0, "e.g. longtime user, friend works there, love the product")
+                self.connection_entry.config(fg="#666666")
+
+        self.connection_entry.config(fg="#666666")
+        self.connection_entry.bind("<FocusIn>", clear_placeholder)
+        self.connection_entry.bind("<FocusOut>", restore_placeholder)
+
         # Model Selection
         model_frame = tk.Frame(main_frame, bg=self.bg_color)
         model_frame.pack(fill=tk.X, pady=5)
@@ -160,7 +200,7 @@ class ResumeTailorGUI:
 
         sonnet_radio = tk.Radiobutton(
             model_frame,
-            text="[X] SONNET-4 (Precision)",
+            text="[X] SONNET 4.5 (Precision)",
             variable=self.model_var,
             value="sonnet",
             font=self.mono_font,
@@ -241,6 +281,48 @@ class ResumeTailorGUI:
         )
         discovery_check.pack(side=tk.LEFT, padx=10)
 
+        self.thought_pattern_var = tk.BooleanVar(value=False)
+        thought_pattern_check = tk.Checkbutton(
+            output_frame,
+            text="[ ] THOUGHT PATTERN",
+            variable=self.thought_pattern_var,
+            font=self.mono_font,
+            fg=self.fg_color,
+            bg=self.bg_color,
+            selectcolor=self.text_bg,
+            activebackground=self.bg_color,
+            activeforeground=self.accent_color
+        )
+        thought_pattern_check.pack(side=tk.LEFT, padx=10)
+
+        self.trace_var = tk.BooleanVar(value=True)
+        trace_check = tk.Checkbutton(
+            output_frame,
+            text="[X] TRACE",
+            variable=self.trace_var,
+            font=self.mono_font,
+            fg=self.fg_color,
+            bg=self.bg_color,
+            selectcolor=self.text_bg,
+            activebackground=self.bg_color,
+            activeforeground=self.accent_color
+        )
+        trace_check.pack(side=tk.LEFT, padx=10)
+
+        self.interview_prep_var = tk.BooleanVar(value=False)
+        interview_prep_check = tk.Checkbutton(
+            output_frame,
+            text="[ ] INTERVIEW PREP",
+            variable=self.interview_prep_var,
+            font=self.mono_font,
+            fg=self.fg_color,
+            bg=self.bg_color,
+            selectcolor=self.text_bg,
+            activebackground=self.bg_color,
+            activeforeground=self.accent_color
+        )
+        interview_prep_check.pack(side=tk.LEFT, padx=10)
+
         # Generate Button
         button_frame = tk.Frame(main_frame, bg=self.bg_color)
         button_frame.pack(pady=20)
@@ -259,6 +341,31 @@ class ResumeTailorGUI:
             cursor="hand2"
         )
         self.generate_btn.pack()
+
+        # Progress Bar (hidden by default)
+        self.progress_frame = tk.Frame(main_frame, bg=self.bg_color)
+        self.progress_frame.pack(fill=tk.X, pady=(5, 0))
+
+        self.progress_bar = ttk.Progressbar(
+            self.progress_frame,
+            mode='indeterminate',
+            length=400
+        )
+        # Style the progress bar to match terminal theme
+        style = ttk.Style()
+        style.configure("Terminal.Horizontal.TProgressbar",
+                        background=self.accent_color,
+                        troughcolor=self.text_bg)
+        self.progress_bar.configure(style="Terminal.Horizontal.TProgressbar")
+        # Don't pack yet - shown during generation
+
+        self.progress_label = tk.Label(
+            self.progress_frame,
+            text="",
+            font=self.mono_font,
+            fg=self.accent_color,
+            bg=self.bg_color
+        )
 
         # Status Display
         self.create_section_header(main_frame, "╔═══ STATUS ════════════════════════════════════════════════╗")
@@ -874,6 +981,10 @@ class ResumeTailorGUI:
         # Validate inputs
         job_desc = self.job_desc_text.get("1.0", tk.END).strip()
         company_name = self.company_entry.get().strip()
+        personal_connection = self.connection_entry.get().strip()
+        # Clear placeholder text
+        if personal_connection.startswith("e.g."):
+            personal_connection = ""
 
         if not job_desc:
             messagebox.showerror("Error", "Please paste a job description!")
@@ -883,12 +994,16 @@ class ResumeTailorGUI:
             messagebox.showerror("Error", "Please enter a company name!")
             return
 
-        if not self.resume_var.get() and not self.cover_letter_var.get():
-            messagebox.showerror("Error", "Select at least Resume or Cover Letter!")
+        if not self.resume_var.get() and not self.cover_letter_var.get() and not self.interview_prep_var.get():
+            messagebox.showerror("Error", "Select at least Resume, Cover Letter, or Interview Prep!")
             return
 
-        # Disable button during generation
+        # Disable button and show progress during generation
         self.generate_btn.config(state=tk.DISABLED)
+        self.progress_label.config(text=">> Generating documents...")
+        self.progress_label.pack(side=tk.LEFT, padx=(0, 10))
+        self.progress_bar.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self.progress_bar.start(15)
 
         # If discovery mode enabled, run discovery FIRST (blocking)
         if self.discovery_var.get():
@@ -918,12 +1033,12 @@ class ResumeTailorGUI:
         # Run generation in background thread
         thread = threading.Thread(
             target=self._generate_thread,
-            args=(job_desc, company_name),
+            args=(job_desc, company_name, personal_connection),
             daemon=True
         )
         thread.start()
 
-    def _generate_thread(self, job_desc, company_name):
+    def _generate_thread(self, job_desc, company_name, personal_connection=""):
         """Background thread for document generation."""
         try:
             self.log_status("╔═══════════════════════════════════════════════════════════╗")
@@ -932,12 +1047,13 @@ class ResumeTailorGUI:
             self.log_status("")
 
             # Determine model
+            import config
             if self.model_var.get() == "haiku":
-                self.log_status(">> Using HAIKU (fast generation mode)")
-                # Temporarily switch model - we'd need to modify generator for this
-                # For now, it will use whatever is set in generator.py
+                config.CLAUDE_MODEL = config.CLAUDE_MODEL_HAIKU
+                self.log_status(">> Using HAIKU 4.5 (fast generation mode)")
             else:
-                self.log_status(">> Using SONNET-4 (high quality mode)")
+                config.CLAUDE_MODEL = config.CLAUDE_MODEL_SONNET
+                self.log_status(">> Using SONNET 4.5 (high quality mode)")
 
             self.log_status(f">> Target company: {company_name}")
             self.log_status(">> Parsing job description...")
@@ -966,7 +1082,11 @@ class ResumeTailorGUI:
                 output_dir=base_dir,
                 resume_only=not self.cover_letter_var.get(),
                 cover_letter_only=not self.resume_var.get(),
-                output_format="all"
+                output_format="all",
+                thought_pattern=self.thought_pattern_var.get(),
+                trace_enabled=self.trace_var.get(),
+                interview_prep=self.interview_prep_var.get(),
+                personal_connection=personal_connection
             )
 
             # Validate output files for placeholder text before declaring success
@@ -1013,8 +1133,13 @@ class ResumeTailorGUI:
             ))
 
         finally:
-            # Re-enable button
-            self.root.after(0, lambda: self.generate_btn.config(state=tk.NORMAL))
+            # Re-enable button and hide progress bar
+            def cleanup_ui():
+                self.generate_btn.config(state=tk.NORMAL)
+                self.progress_bar.stop()
+                self.progress_bar.pack_forget()
+                self.progress_label.pack_forget()
+            self.root.after(0, cleanup_ui)
 
 
 def main():

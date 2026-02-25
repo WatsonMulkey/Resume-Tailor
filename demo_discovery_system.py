@@ -44,7 +44,7 @@ def demo_skill_detection():
     )
 
     job = Job(
-        company="Foil Industries",
+        company="Foil Engineering",
         title="Senior Product Manager",
         start_date="2023-06",
         end_date="Present"
@@ -53,7 +53,7 @@ def demo_skill_detection():
     # Add existing skill
     achievement = Achievement(
         description="Led product strategy and roadmap for SaaS platform",
-        company="Foil Industries",
+        company="Foil Engineering",
         timeframe="2023-06 to 2024-01",
         result="30% user growth"
     )
@@ -127,7 +127,7 @@ def demo_validation_good_example():
     print("\n[Scenario] User adds 'Kubernetes' skill with good example")
     print("\nUser Input:")
     print("  Skill: Kubernetes")
-    print("  Company: Foil Industries")
+    print("  Company: Foil Engineering")
     print("  Timeframe: 2023-09 to 2024-03")
     print("  Example: Orchestrated migration from Docker Swarm to Kubernetes,")
     print("           managing deployment pipelines for 8 microservices with")
@@ -137,7 +137,7 @@ def demo_validation_good_example():
     # Create discovered skill
     discovered = DiscoveredSkill(
         name="Kubernetes",
-        company="Foil Industries",
+        company="Foil Engineering",
         timeframe="2023-09 to 2024-03",
         example="Orchestrated migration from Docker Swarm to Kubernetes, managing deployment pipelines for 8 microservices with Helm charts, reducing deployment time from 45min to 8min",
         result="82% faster deployments"
@@ -155,7 +155,7 @@ def demo_validation_good_example():
 
     if validation['valid']:
         print("\n  [OK] All checks passed!")
-        print("  - Timeframe within job history at Foil Industries")
+        print("  - Timeframe within job history at Foil Engineering")
         print("  - Company verified")
         print("  - No duplicate detected")
         print("  - No future dates")

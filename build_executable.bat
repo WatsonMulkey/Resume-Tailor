@@ -29,6 +29,8 @@ python -m PyInstaller --onefile ^
     --add-data "html_template.py;." ^
     --add-data "docx_generator.py;." ^
     --add-data "conflict_detector.py;." ^
+    --add-data "provenance.py;." ^
+    --add-data "trace_validator.py;." ^
     --add-data ".env;." ^
     --hidden-import anthropic ^
     --hidden-import dotenv ^

@@ -413,7 +413,7 @@ Before saving, show formatted preview:
 PROPOSED ADDITION
 ────────────────────────────────────────
 Skill: PostgreSQL Database Design
-Company: Foil Industries
+Company: Foil Engineering
 Timeframe: 2023-06 to 2024-03
 Example: Designed normalized schema for multi-tenant
          SaaS application, reducing query times by 40%
@@ -696,7 +696,7 @@ def generate_clicked():
    ```
    Migrating... ████████████░░░░ 75% (22/29 entries)
 
-   ✓ Migrated job: Foil Industries
+   ✓ Migrated job: Foil Engineering
    ✓ Migrated skill: PostgreSQL
    ✓ Migrated skill: Python
    ...
@@ -779,11 +779,11 @@ def generate_clicked():
 
    [Text input: ___________________]
 
-   Example: "Foil Industries" or "Personal Project: SaaS App"
+   Example: "Foil Engineering" or "Personal Project: SaaS App"
 
    [Back] [Next]
    ```
-   Sarah enters: "Foil Industries"
+   Sarah enters: "Foil Engineering"
 
    **Step 3/5: Timeframe**
    ```
@@ -832,7 +832,7 @@ def generate_clicked():
    ```
    Checking consistency...
 
-   ✅ Timeframe matches your employment at Foil Industries
+   ✅ Timeframe matches your employment at Foil Engineering
       (2023-06 to 2024-03 ✓)
    ✅ Company verified in job history
    ⚠️  Similarity check: 15% match to job description (acceptable)
@@ -845,7 +845,7 @@ def generate_clicked():
    ────────────────────────────────────────
    Skill: Kubernetes
    Category: Technical (Infrastructure)
-   Company: Foil Industries
+   Company: Foil Engineering
    Timeframe: 2023-06 to 2024-03
 
    Example:
@@ -892,7 +892,7 @@ def generate_clicked():
 
    PROFESSIONAL EXPERIENCE
    ────────────────────────
-   Foil Industries | Senior Backend Developer | Jun 2023 - Mar 2024
+   Foil Engineering | Senior Backend Developer | Jun 2023 - Mar 2024
 
    • Orchestrated migration from Docker Swarm to Kubernetes,
      managing deployment pipelines for 8 microservices with
@@ -1064,7 +1064,7 @@ def generate_clicked():
        {
          "name": "PostgreSQL",
          "examples": [{
-           "company": "Foil Industries",
+           "company": "Foil Engineering",
            "timeframe": "2023-06 to 2024-03",  // Wrong end date
            "description": "..."
          }]
@@ -1510,7 +1510,7 @@ def generate_clicked():
 - Discovery prompt shows "Kubernetes" detected
 - User clicks "Yes, let's add them"
 - Multi-step dialog opens (5 steps)
-- User enters: Foil Industries, 2023-06 to 2024-03, specific example, result
+- User enters: Foil Engineering, 2023-06 to 2024-03, specific example, result
 - Consistency validation passes (timeframe matches job history)
 - Review mode shows formatted preview with green checkmarks
 - User clicks "Save"
