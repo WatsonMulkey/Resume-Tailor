@@ -50,7 +50,7 @@ CAREER_DATA = {
             "responsibilities": [
                 "Built and shipped The Number, a full-stack personal budgeting PWA (Vue 3, Vuetify, FastAPI, SQLite) with pool/carry-over, expense frequency normalization, beta invite gating, and encrypted settings",
                 "Designed and deployed foil.engineering consulting website (Astro SSG) with blog, collapsible accordion service cards, and SEO optimization",
-                "Developed AI-powered resume generation tool with per-job isolation to prevent LLM achievement misattribution, provenance tracing, and Pydantic-validated career data management",
+                "Developed end-to-end site redesign pipeline automating bulk website capture to Figma, information architecture analysis, HTML mockup generation, and side-by-side comparison delivery for client engagements",
                 "Created client proposals and website redesigns for neighborhood organizations including Curtis Park Neighbors",
                 "Built encrypted RAG database with vector persistence, MCP server integration, and dual-layer security architecture",
                 "Managed full deployment pipeline across Vercel (frontend), Fly.io (backend), and GitHub with CI/CD workflows"
@@ -66,7 +66,7 @@ CAREER_DATA = {
                 "Delivered and maintain comprehensive reporting suite for flagship product, delivering actionable insights to internal stakeholders and external clients",
                 "Develop and maintain multi-vertical dependency roadmap",
                 "Create consensus between sales, customer success, engineering, and clients for features that are both valuable and scalable",
-                "Building contextual user experience engine to provide unique customer insights for brands",
+                "Designed and prototyped contextual user experience engine to provide unique customer insights for brands",
                 "Leading updates and migrations of legacy services and products",
                 "Collaborate cross-functionally to optimize engineering output through improved workflows and strategic alignment"
             ]
@@ -153,12 +153,12 @@ CAREER_DATA = {
             "methods": "Vue 3, FastAPI, SQLite with WAL mode, Pydantic validation, Zod schemas, PWA with service workers"
         },
         {
-            "achievement": "Developed AI tool that eliminates achievement misattribution in resume generation",
+            "achievement": "Delivered end-to-end site redesign pipeline for client engagements",
             "company": "FOIL Engineering",
-            "context": "Built resume-tailor with per-job isolation architecture that prevents LLMs from cross-contaminating achievements between jobs. Implemented provenance tracing to validate every claim maps to the correct employer.",
-            "metrics": "Zero misattribution errors in generated resumes after architectural fix",
-            "scope": "AI-assisted document generation with Claude API integration",
-            "methods": "Per-job context isolation, provenance tracing, Pydantic career data validation, two-phase generation pipeline"
+            "context": "Built automated workflow that captures entire websites (33+ pages) into editable Figma designs, analyzes information architecture, generates HTML mockups, and delivers side-by-side comparisons for client review. Used for Curtis Park Neighbors redesign proposal.",
+            "metrics": "33 pages captured and 10 redesign mockups delivered in a single engagement",
+            "scope": "Client-facing site assessment and redesign tooling",
+            "methods": "Figma MCP, Playwright automation, Astro SSG, HTML/CSS design system with custom properties"
         },
         {
             "achievement": "Shipped consulting website with SEO optimization and client acquisition pipeline",
@@ -322,11 +322,11 @@ CAREER_DATA = {
             "skill": "AI & Modern Development Tools",
             "evidence": [
                 "Built production AI applications using Claude API with RAG architecture",
-                "Designed anti-hallucination patterns for factual accuracy in AI-generated content",
+                "Diagnosed and resolved 11 RAG pipeline quality issues across configuration, integration, and retrieval tiers",
                 "Integrated MCP (Model Context Protocol) servers for semantic data retrieval",
                 "Experienced with prompt engineering and AI optimization for business use cases",
                 "Developed full-stack applications using AI-assisted development workflows",
-                "Built resume-tailor with per-job isolation preventing LLM cross-contamination at FOIL Engineering",
+                "Built automated site capture pipeline processing 33+ pages into editable Figma designs using MCP integrations",
                 "Created encrypted RAG database (rag-vault) with vector persistence and MCP integration"
             ],
             "tools": ["Claude API", "Python", "Vue 3", "FastAPI", "MCP", "Pydantic", "Zod"],
